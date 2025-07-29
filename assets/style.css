@@ -1,0 +1,494 @@
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap");
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body{
+  background-color: #fbf9f7;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+h1 {
+  font-family: "Cormorant Garamond", serif;
+  font-weight: bold;
+  font-size: 2.813rem;
+  color: #d62828;
+}
+
+h3 {
+  font-family: "Open Sans", serif;
+  font-weight: bold;
+  font-size: 1.563rem;
+  color: #d62828;
+}
+
+h4 {
+  font-family: "Open Sans", serif;
+  font-weight: bold;
+  font-size: 1.25rem;
+  color: black;
+}
+
+h5 {
+  font-family: "Open Sans", serif;
+  font-weight: bold;
+  font-size: 1.25rem;
+  color: #d62828;
+}
+
+a {
+  font-family: "Open Sans", serif;
+  font-weight: bolder;
+  font-size: 1rem;
+  text-decoration: none;
+  color: white;
+}
+
+p {
+  font-family: "Open Sans", serif;
+  font-weight: 600;
+  font-size: 0.938rem;
+  color: black;
+}
+
+i{
+  color: #f9b400;
+  font-size: 2rem;
+}
+
+/* Menu */
+header {
+  background-color: #d62828;
+}
+
+.header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 80%;
+  margin: auto;
+  position: relative;
+}
+
+.logo {
+  width: 20%;
+  transform: scale(1);
+  transition: scale 0.5s ease;
+  position: relative;
+  left: -20px;
+}
+
+.logo:hover {
+  scale: 1.06;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+nav {
+  min-width: 50%;
+}
+
+nav ul {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1.875rem;
+  list-style-type: none;
+}
+
+.hover-effect {
+  transform: scale(1);
+  transition: scale 0.5s ease;
+}
+
+.hover-effect:hover {
+  scale: 1.1;
+}
+
+.borda-branca a {
+  padding: 10px 20px;
+  border-radius: 30px;
+  border: solid #fff 2px;
+  background-color: #d62828;
+  transition: all 0.5s ease;
+}
+
+.borda-branca a:hover {
+  color: black;
+  background-color: #fff;
+}
+
+.borda-amarela a {
+  color: black;
+  padding: 10px 20px;
+  border-radius: 30px;
+  border: solid #f5ce05 2px;
+  background-color: #f5ce05;
+  transition: all 0.5s ease;
+}
+
+.borda-amarela a:hover {
+  border: solid #ffe459 2px;
+  background-color: #ffe459;
+}
+/* Fim Menu*/
+
+/* Banner*/
+#banner {
+  width: 100%;
+}
+
+#banner img {
+  width: 100%;
+  height: auto;
+}
+/* Fim Banner*/
+
+/* Sabores em Destaque*/
+#saboresDestaque, #pizzas-salgadas, #pizzas-doces{
+  display: flex;
+  flex-direction: column;
+  width: 80%;
+  margin: 90px auto;
+}
+
+.titulo-tamanhos{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: solid #d62828 2px;
+}
+
+.card-tamanhos{
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  min-width: 32%;
+  margin-bottom: 10px;
+}
+
+.tamanhos{
+  text-align: center;
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  background-color: #f5f3ef;
+}
+
+#slide-destaque, #slide-salgadas, #slide-doces{
+  display: flex;
+  flex-direction: column;
+  width: 80%;
+  margin: auto;
+  padding-top: 90px;
+  position: relative;
+}
+
+.pizzas-destaque, .pizzas-salgadas, .pizzas-doces{
+  display: none;
+  justify-content: center;
+  opacity: 0;
+}
+
+.destaque-ativo, .salgadas-ativo, .doces-ativo{
+  display: flex;
+  opacity: 1;
+}
+
+.card-sabores{ 
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  text-align: center;
+  width: 21%;
+  height: 440px;
+  margin: 0 60px;
+  padding: 10px 20px 30px;
+  border-radius: 30px;
+  background-color: #ffeaea;
+}
+
+.card-sabores a{
+  padding: 10px 20px;
+  border-radius: 30px;
+  background-color: #d62828;
+  transition: all 0.5s ease;
+}
+
+.card-sabores a:hover{
+  background-color: #f65656;
+}
+
+.btn-setas{
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  position: absolute;
+  top: 50%;
+}
+
+.setaEsquerda, .setaDireita{
+  cursor: pointer;
+  border: none;
+  background-color: transparent;
+}
+/* Fim Sabores em Destaque */
+
+/* Promoções */
+#promocoes{
+  width: 80%;
+  margin: 90px auto;
+}
+
+.img-promocoes{
+  display: flex;
+  width: 80%;
+  margin: auto;
+  padding-top: 90px;
+  gap: 6.25rem;
+}
+
+.img-promocoes img{
+  border-radius: 30px;
+}
+/* Fim Promoções */
+
+/* Quem Somos */
+#quemSomos{
+  width: 80%;
+  height: auto;
+  margin: 90px auto;  
+}
+
+#quemSomos-container{
+  display: flex;
+  width: 80%;
+  min-height: 530px;
+  margin: auto;
+  padding-top: 90px;
+  position: relative;  
+}
+
+#chef-numero{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 45%;
+  gap: 8px;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  z-index: 1;
+}
+
+.centralizar{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-vermelho{
+  padding: 10px 20px;
+  border-radius: 30px;
+  background-color: #d62828;
+  transition: all 0.5s ease;
+}
+
+.btn-vermelho:hover{
+  background-color: #f65656;
+}
+
+#sobreNos-conteudo{
+  display: flex;
+  flex-direction: column;
+  text-align: justify;
+  padding: 10px 40px;
+  width: 63%;
+  height: 350px;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  border-radius: 30px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  background-color: #f5f3ef;
+}
+
+.logo-sobreNos{
+  width: 40%;
+  position: relative;
+  left: -20px;
+}
+
+#sobreNos-conteudo p{
+  margin-bottom: 10px;
+}
+
+#sobreNos-conteudo img{
+  width: 100%;
+}
+/* Fim Quem Somos */
+
+/* Avaliações */
+#avaliacoes{
+  width: 80%;
+  margin: 90px auto;
+}
+
+#slide-avaliacoes{
+  display: flex;
+  flex-direction: column;
+  width: 80%;
+  margin: auto;
+  padding-top: 90px;
+  position: relative;
+}
+
+.avaliacoes-destaque{
+  display: none;
+  opacity: 0;
+  justify-content: center;
+}
+
+.avaliacoes-ativo{
+  display: flex;
+  opacity: 1;
+}
+
+.card-avaliacoes{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  width: 28%;
+  height: 300px;
+  margin: 0 10px;
+  padding: 60px 20px;  
+  border-radius: 30px;
+  background-color: #ffeaea;
+}
+
+.separacao-img-texto{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.separacao-img-texto img{
+  width: 35%;
+  border-radius: 50%;
+}
+/* Fim Avaliações */
+
+/* Rodapé */
+footer{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 0;
+  background-color: #d62828;
+}
+
+.rodape-container{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 80%;
+  margin: auto;
+}
+
+.contato-redes{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  left: -50px;
+}
+
+.btn-rodape ul{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 35px;
+  list-style-type: none;
+}
+
+footer span{
+  margin: 10px 0 10px 0;
+  color: white;
+}
+/* Fim Rodapé */
+
+/* Aqui começa o Cardápio*/
+
+/* Cardápio Banner */
+#cardapio-banner{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+  padding: 40px 0 50px 0;
+  background-color: #f5f3ef;
+}
+
+.card-tamanhos-personalisados{
+  gap: 50px;
+  min-width: 32%;
+}
+
+.tamanhos-cardapio{
+  text-align: center;
+  padding: 6px 40px;
+  line-height: 30px;
+  border-radius: 10px;
+  box-shadow: none;
+  background-color: #ffffff;
+}
+
+.tamanhos-cardapio h5{
+  margin-bottom: 10px;
+}
+/* Fim Cardápio Banner */
+
+/* Pizzas Salgadas e Doces */
+.pizzas-salgadas, .pizzas-doces{
+  display: none;
+  grid-template-columns: repeat(2, auto);
+  gap: 20px 20px;
+  opacity: 0;
+}
+
+.salgadas-ativo, .doces-ativo{
+  display: grid;
+  opacity: 1;
+}
+
+.card-salgadas, .card-doces{ 
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-align: justify;
+  max-width: 540px;
+  height: 250px;
+  padding: 0 20px 0 10px;
+  border-radius: 30px;
+  background-color: #ffeaea;
+}
+
+.espaco{
+  margin-left: 15px;
+}
