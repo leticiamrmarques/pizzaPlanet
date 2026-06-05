@@ -42,6 +42,7 @@ const PAGE_ROUTES = {
   '/painel/funcionarios': 'painel-funcionarios.html',
   '/painel/entregas': 'painel-entregas.html',
   '/meu-perfil': 'meu-perfil.html'
+  '/minha-conta':'minha-conta.html',
 };
 
 function serveStatic(res, filePath) {
