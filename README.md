@@ -13,9 +13,9 @@
 
 ---
 
-Sistema web completo de pedidos para pizzaria, desenvolvido com **Node.js puro** (sem frameworks) e **MySQL**. Permite que clientes montem e finalizem pedidos online, e que funcionários gerenciem cardápio, clientes, pedidos e entregas por um painel administrativo.
-**Protótipo:** [Figma](https://www.figma.com/proto/e32V9OAjL0FLDozsEt0WpX/Pizza-Planet?node-id=1-2&p=f&t=BHml5i9IKOSUea3k-1&scaling=scale-down&content-scaling=fixed&page-id=0%3A1&starting-point-node-id=1%3A2)
-Modelo Lógico do Banco de Dados: [DBDiagram](https://dbdiagram.io/d/Pizzaria-6a1eca702eeb2f46cd412c2c)
+Sistema web completo de pedidos para pizzaria, desenvolvido com **Node.js** e **MySQL**. Permite que clientes montem e finalizem pedidos online, e que funcionários gerenciem cardápio, clientes, pedidos e entregas por um painel administrativo.<br>
+**Protótipo:** [Figma](https://www.figma.com/proto/e32V9OAjL0FLDozsEt0WpX/Pizza-Planet?node-id=1-2&p=f&t=BHml5i9IKOSUea3k-1&scaling=scale-down&content-scaling=fixed&page-id=0%3A1&starting-point-node-id=1%3A2)<br>
+**Modelo Lógico do Banco de Dados:** [DBDiagram](https://dbdiagram.io/d/Pizzaria-6a1eca702eeb2f46cd412c2c)
 
 ---
 
@@ -194,6 +194,6 @@ Acesse em: **http://localhost:3000**
 
 ## 👩‍💻 Autora
 
-Desenvolvido por **Letícia Marques** como projeto da disciplina de Programação para Web — IFB, 3º período de TDS.
+Desenvolvido por **Letícia Marques** como projeto da disciplina de Programação para Web — IFB, 3º período do curso Técnico em Deesenvolvimento de Sistemas.
 - GitHub: [@leticiamrmarques](https://github.com/leticiamrmarques)
 - Email: leticiamrmarques@gmail.com
