@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pizza Planet — Delivery </title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-container">
+    <div class="logo hover-effect">
+      <a href="/home">
+        <img src="/img/Logo/Logo Branca.png" alt="Logo Pizza Planet">
+      </a>
+    </div>
+    <nav>
+      <ul>
+        <li class="hover-effect"><a href="/cardapio">CARDÁPIO</a></li>
+        <li class="hover-effect"><a href="#promocoes">PROMOÇÕES</a></li>
+        <li class="hover-effect"><a href="#avaliacoes">AVALIAÇÕES</a></li>
+        <li class="borda-branca hover-effect" id="nav-reservas">
+          <a href="https://wa.me/5561999601108" target="_blank">RESERVAS</a>
+        </li>
+        <li id="nav-painel" class="borda-branca hover-effect" style="display:none">
+          <a href="/painel/pedidos">PAINEL</a>
+        </li>
+        <li id="nav-entregas" class="borda-branca hover-effect" style="display:none">
+          <a href="/painel/entregas">ENTREGAS</a>
+        </li>
+        <li id="nav-minha-conta" class="borda-branca hover-effect" style="display:none">
+          <a href="/minha-conta">MINHA CONTA</a>
+        </li>
+        <li id="nav-logout" class="hover-effect" style="display:none">
+          <a href="#" id="nav-nome" onclick="fazerLogout();return false">SAIR</a>
+        </li>
+        <li id="nav-login" class="borda-amarela hover-effect">
+          <a href="#" onclick="mostrarLogin();return false">ENTRAR</a>
+        </li>
+        <li id="nav-fazer-pedido" class="borda-amarela hover-effect">
+          <a href="#" onclick="abrirCarrinho();return false">FAÇA SEU PEDIDO</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<!-- BANNER -->
+<div id="banner-container">
+  <img src="/img/Banner/Banner-semletras.png" alt="Pizza sendo assada em forno a lenha">
+  <span class="texto-rodizio">RODÍZIO <br>R$54,90</span>
+  <span class="texto-horario">todos os dias, das 19h às 23h</span>
+</div>
+
+<!-- SABORES EM DESTAQUE -->
+<main id="saboresDestaque">
+  <div class="titulo-tamanhos">
+    <h1>SABORES EM DESTAQUE</h1>
+    <div class="card-tamanhos" id="lista-tamanhos">
+      <!-- preenchido via JS -->
+    </div>
+  </div>
+  <div id="slide-destaque">
+    <!-- slides preenchidos via JS -->
+    <div class="btn-setas">
+      <button class="setaEsquerda hover-effect-card" id="setaEsquerda-destaques" aria-label="Slide anterior">
+        <img src="/img/Icones/Seta Esquerda.png" alt="">
+      </button>
+      <button class="setaDireita hover-effect-card" id="setaDireita-destaques" aria-label="Próximo slide">
+        <img src="/img/Icones/Seta Direita.png" alt="">
+      </button>
+    </div>
+  </div>
+</main>
+
+<!-- PROMOÇÕES -->
+<section id="promocoes">
+  <div class="titulo-tamanhos">
+    <h1>PROMOÇÕES</h1>
+  </div>
+  <div class="img-promocoes">
+    <div>
+      <a href="#" class="hover-effect-card" onclick="abrirCarrinho();return false">
+        <img src="/img/Combo/combo.png" alt="Combo pizza grande mais pizza doce broto mais Coca-Cola 2 litros, total R$ 94,90">
+      </a>
+    </div>
+    <div>
+      <a href="#" class="hover-effect-card" onclick="abrirCarrinho();return false">
+        <img src="/img/Combo/combo-familia.png" alt="Combo duas pizzas grandes mais Coca-Cola 2 litros, total R$ 139,90">
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- QUEM SOMOS -->
+<section id="quemSomos">
+  <div class="titulo-tamanhos">
+    <h1>QUEM SOMOS</h1>
+  </div>
+  <div id="quemSomos-container">
+    <div id="chef-numero">
+      <img src="/img/Sobre Nós/chef.png" alt="Chef da Pizza Planet">
+      <div class="centralizar">
+        <a href="#"><img src="/img/Icones/Telefone Vermelho.png" alt="Ícone telefone"></a>
+        <a href="https://wa.me/5561999601108" target="_blank"><h4>(61) 99999-9999</h4></a>
+      </div>
+      <a href="https://www.google.com/maps" target="_blank" class="btn-vermelho hover-effect">COMO CHEGAR</a>
+    </div>
+    <div id="sobreNos-conteudo">
+      <div class="logo-sobreNos">
+        <img src="/img/Logo/Logo Preta.png" alt="Logo Pizza Planet">
+      </div>
+      <p>Desde 2005, a Pizza Planet conquista o paladar dos brasilienses ao unir a tradição da culinária italiana com um toque criativo e moderno. Nossas pizzas, com massa leve e ingredientes frescos, são preparadas artesanalmente e assadas em forno a lenha – do clássico ao gourmet, cada fatia é uma experiência única.</p>
+      <p>Em nosso endereço na 104 Sul você encontra um ambiente acolhedor, atendimento de qualidade e um cardápio feito para transformar qualquer momento em algo especial.</p>
+    </div>
+  </div>
+</section>
+
+<!-- AVALIAÇÕES -->
+<section id="avaliacoes">
+  <div class="titulo-tamanhos">
+    <h1>AVALIAÇÕES</h1>
+  </div>
+  <div id="slide-avaliacoes">
+    <div class="avaliacoes-destaque avaliacoes-ativo">
+      <div class="card-avaliacoes">
+        <div class="separacao-img-texto">
+          <img src="/img/Avaliações/sobre-dep1.png" alt="Foto Carla Duarte">
+          <div class="texto-direita">
+            <h4>CARLA DUARTE</h4>
+            <i>★★★★★</i>
+          </div>
+        </div>
+        <p>A pizza é uma delícia, bem recheada e chegou super rápido.</p>
+      </div>
+      <div class="card-avaliacoes">
+        <div class="separacao-img-texto">
+          <img src="/img/Avaliações/sobre-dep3.png" alt="Foto Amanda Lima">
+          <div class="texto-direita">
+            <h4>AMANDA LIMA</h4>
+            <i>★★★★★</i>
+          </div>
+        </div>
+        <p>Simplesmente maravilhosa! A melhor pizza que já comi, com massa leve e muito sabor. Já virou minha preferida!</p>
+      </div>
+      <div class="card-avaliacoes">
+        <div class="separacao-img-texto">
+          <img src="/img/Avaliações/sobre-dep2.png" alt="Foto Eduardo Praça">
+          <div class="texto-direita">
+            <h4>EDUARDO PRAÇA</h4>
+            <i>★★★★★</i>
+          </div>
+        </div>
+        <p>Entrega rápida, atendimento excelente e uma pizza saborosa! Virou tradição aqui em casa nos fins de semana!</p>
+      </div>
+    </div>
+    <div class="avaliacoes-destaque">
+      <div class="card-avaliacoes">
+        <div class="separacao-img-texto">
+          <img src="/img/Avaliações/Busto Preto.png" alt="Avatar cliente">
+          <div class="texto-direita"><h4>FULANO DE TAL</h4><i>★★★★★</i></div>
+        </div>
+        <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit.</p>
+      </div>
+      <div class="card-avaliacoes">
+        <div class="separacao-img-texto">
+          <img src="/img/Avaliações/Busto Preto.png" alt="Avatar cliente">
+          <div class="texto-direita"><h4>CICLANO</h4><i>★★★★★</i></div>
+        </div>
+        <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit.</p>
+      </div>
+      <div class="card-avaliacoes">
+        <div class="separacao-img-texto">
+          <img src="/img/Avaliações/Busto Preto.png" alt="Avatar cliente">
+          <div class="texto-direita"><h4>BELTRANO</h4><i>★★★★★</i></div>
+        </div>
+        <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit.</p>
+      </div>
+    </div>
+    <div class="btn-setas">
+      <button class="setaEsquerda hover-effect-card" id="setaEsquerda-avaliacao" aria-label="Avaliações anteriores">
+        <img src="/img/Icones/Seta Esquerda.png" alt="">
+      </button>
+      <button class="setaDireita hover-effect-card" id="setaDireita-avaliacao" aria-label="Próximas avaliações">
+        <img src="/img/Icones/Seta Direita.png" alt="">
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="rodape-container">
+    <div class="logo">
+      <a href="/home">
+        <img src="/img/Logo/Logo Branca.png" alt="Logo Pizza Planet">
+      </a>
+    </div>
+    <div class="contato-redes">
+      <a href="https://wa.me/5561999601108" target="_blank" class="hover-effect centralizar">
+        <img src="/img/Icones/Telefone.png" alt="Ícone telefone">
+        (61) 99999-9999
+      </a>
+      <div class="centralizar">
+        <a href="https://www.facebook.com/?locale=pt_BR" target="_blank" class="hover-effect">
+          <img src="/img/Icones/Facebook.png" alt="Facebook">
+        </a>
+        <a href="https://www.instagram.com/" target="_blank" class="hover-effect">
+          <img src="/img/Icones/Instagram.png" alt="Instagram">
+        </a>
+        <a href="https://www.tripadvisor.com.br/" target="_blank" class="hover-effect">
+          <img src="/img/Icones/Trip Advisor.png" alt="TripAdvisor">
+        </a>
+      </div>
+    </div>
+    <div class="btn-rodape">
+      <ul>
+        <li class="borda-branca hover-effect">
+          <a href="https://wa.me/5561999601108" target="_blank">RESERVAS</a>
+        </li>
+        <li class="borda-amarela hover-effect">
+          <a href="#" onclick="abrirCarrinho();return false">FAÇA SEU PEDIDO</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="rodape-copyright">
+    <span>Todos os direitos reservados. Pizza Planet — 2026</span>
+  </div>
+</footer>
+
+<!-- ════ MODAL LOGIN ════ -->
+<div class="modal-overlay hidden" id="modal-login">
+  <div class="modal-box" style="max-width:380px">
+    <button class="modal-fechar" onclick="fecharModal('modal-login')">✕</button>
+    <h3>Entrar</h3>
+    <div class="form-group">
+      <label>Login ou E-mail</label>
+      <input class="form-control" id="login-input" type="text" placeholder="seu.login ou email@exemplo.com">
+    </div>
+    <div class="form-group">
+      <label>Senha</label>
+      <input class="form-control" id="login-senha" type="password" placeholder="••••••••">
+    </div>
+    <p id="login-erro" class="login-erro"></p>
+    <button class="btn-amarelo" onclick="submitLogin()">ENTRAR</button>
+    <p class="modal-cadastro-link">
+      Não tem conta? <a href="/cadastro">Cadastre-se</a>
+    </p>
+  </div>
+</div>
+
+<!-- ════ OVERLAY CARRINHO ════ -->
+<div id="overlay-carrinho" class="hidden" aria-hidden="true" role="dialog" aria-modal="true">
+  <div class="carrinho-container" role="document" tabindex="0">
+    <button class="fechar-overlay" aria-label="Fechar carrinho" onclick="fecharCarrinho()">×</button>
+
+    <h2>Faça seu pedido</h2>
+
+    <form id="form-carrinho">
+
+      <div class="etapa linha-dupla">
+        <div class="col-esquerda">
+          <h3>Escolha o tamanho da pizza</h3>
+          <select id="tamanho-pizza" name="tamanho">
+            <option value="" disabled selected>Selecione o tamanho</option>
+          </select>
+        </div>
+        <div class="col-direita">
+          <h3>Quantidade</h3>
+          <select id="quantidade-pizza" name="quantidade">
+            <option value="1" selected>1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="etapa">
+        <h3>Escolha os sabores (máximo <span id="max-sabores">0</span>)</h3>
+        <div id="sabores-container" class="sabores-container">
+          <!-- preenchido via JS -->
+        </div>
+      </div>
+
+      <div class="etapa">
+        <h3>Escolha a borda</h3>
+        <select id="borda-pizza" name="borda">
+          <option value="" selected>Sem borda</option>
+        </select>
+      </div>
+
+      <div class="etapa">
+        <button type="button" id="btn-adicionar-pizza" class="btn-adicionar">
+          + Adicionar pizza(s) ao carrinho
+        </button>
+      </div>
+
+      <div class="etapa">
+        <h3>Escolha a bebida (opcional)</h3>
+        <select id="tipo-bebida" name="tipo-bebida">
+          <option value="" selected>Sem bebida</option>
+        </select>
+      </div>
+
+      <div class="etapa etapa-bebida-oculta" id="container-tamanho-bebida">
+        <h3>Escolha o volume da bebida</h3>
+        <select id="volume-bebida" name="volume-bebida" disabled></select>
+      </div>
+
+      <div class="etapa etapa-bebida-oculta" id="container-sabor-bebida">
+        <h3>Escolha o sabor da bebida</h3>
+        <select id="sabor-bebida" name="sabor-bebida" disabled></select>
+      </div>
+
+      <div class="etapa etapa-bebida-oculta" id="btn-bebida-wrap">
+        <button type="button" id="btn-adicionar-bebida" class="btn-adicionar">
+          + Adicionar bebida ao carrinho
+        </button>
+      </div>
+
+      <!-- Resumo do carrinho -->
+      <div id="resumo-carrinho" class="resumo-oculto">
+        <h3>Resumo do pedido</h3>
+        <div id="itens-resumo"></div>
+        <div class="preco-total"></div>
+      </div>
+
+      <!-- Dados de entrega (só aparece quando logado) -->
+      <div id="area-entrega" class="area-entrega">
+        <div class="etapa">
+          <h3>Endereço de entrega</h3>
+          <select id="select-endereco"></select>
+          <div id="area-novo-endereco" class="area-novo-endereco">
+            <p>Você não tem endereços cadastrados.</p>
+          </div>
+          <a href="/minha-conta?aba=enderecos" class="link-gerenciar-enderecos">+ Gerenciar endereços</a>
+        </div>
+        <div class="etapa">
+          <h3>Forma de pagamento</h3>
+          <select id="select-pagamento" onchange="atualizarCampoPagamento()">
+            <option value="pix">Pix</option>
+            <option value="cartao_credito">Cartão de Crédito</option>
+            <option value="cartao_debito">Cartão de Débito</option>
+            <option value="dinheiro">Dinheiro</option>
+          </select>
+          <div id="area-troco" class="area-troco">
+            <h3>Troco</h3>
+            <label class="label-troco">
+              <input type="radio" name="troco" value="trocado" checked onchange="atualizarTroco()"> Tenho o dinheiro trocado
+            </label>
+            <label class="label-troco-ultimo">
+              <input type="radio" name="troco" value="valor" onchange="atualizarTroco()"> Preciso de troco para:
+            </label>
+            <div id="area-valor-troco" class="area-valor-troco">
+              <input type="number" id="valor-troco" class="form-control input-troco" placeholder="Ex: 100" min="0" step="0.01">
+            </div>
+          </div>
+        </div>
+        <button type="submit">Finalizar Compra</button>
+      </div>
+
+      <!-- Botão login quando não autenticado -->
+      <div id="area-login-carrinho" class="area-login-carrinho">
+        <p>Para finalizar, faça login ou crie uma conta.</p>
+        <button type="button" class="btn-amarelo" onclick="fecharCarrinho();mostrarLogin()">ENTRAR</button>
+        <p class="cadastro-link">
+          Não tem conta? <a href="/cadastro">Cadastre-se</a>
+        </p>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast-container" id="toasts"></div>
+
+<script src="/js/app.js"></script>
+<script src="/js/cardapio.js"></script>
+</body>
+</html>

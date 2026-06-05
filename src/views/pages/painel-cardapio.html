@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pizza Planet — Gestão</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<header>
+  <div class="header-container painel-header">
+    <div class="logo-painel hover-effect">
+      <a href="/home"><img src="/img/Logo/Logo Branca.png" alt="Logo Pizza Planet"></a>
+    </div>
+    <nav>
+      <ul>
+        <li class="hover-effect"><a href="/meu-perfil" class="nav-perfil-link">Meu Perfil</a></li>
+        <li id="nav-logout">
+          <a href="#" class="btn-nav-borda" onclick="fazerLogout();return false" id="nav-nome">Sair</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<div class="painel-layout">
+  <aside class="painel-sidebar">
+    <div class="sidebar-titulo">Painel</div>
+    <a class="sidebar-link" href="/painel/pedidos" id="link-pedidos">
+      <img class="sidebar-icone" src="/img/Icones/pedidos.png" alt=""> Pedidos
+    </a>
+    <a class="sidebar-link ativo" href="/painel/cardapio">
+      <img class="sidebar-icone" src="/img/Icones/cardapio.png" alt=""> Cardápio
+    </a>
+    <a class="sidebar-link" href="/painel/clientes" id="link-clientes" style="display:none">
+      <img class="sidebar-icone" src="/img/Icones/clientes.png" alt=""> Clientes
+    </a>
+    <a class="sidebar-link" href="/painel/funcionarios" id="link-funcionarios" style="display:none">
+      <img class="sidebar-icone" src="/img/Icones/funcionarios.png" alt=""> Funcionários
+    </a>
+  </aside>
+
+  <main class="painel-conteudo">
+    <h2 class="titulo-secao">Gestão do Cardápio</h2>
+
+    <!-- Tamanhos -->
+    <section class="painel-secao">
+      <h3>Tamanhos e Preços</h3>
+      <table class="tabela" id="tabela-tamanhos"></table>
+    </section>
+
+    <!-- Sabores -->
+    <section class="painel-secao">
+      <div class="painel-secao-header">
+        <h3>Sabores</h3>
+        <button class="btn btn-vermelho btn-sm" onclick="abrirModalSabor()">+ Novo Sabor</button>
+      </div>
+      <table class="tabela" id="tabela-sabores"></table>
+    </section>
+
+    <!-- Bordas -->
+    <section class="painel-secao">
+      <h3>Bordas</h3>
+      <table class="tabela" id="tabela-bordas"></table>
+    </section>
+
+    <!-- Bebidas -->
+    <section class="painel-secao">
+      <h3>Bebidas (Disponibilidade)</h3>
+      <table class="tabela" id="tabela-bebidas"></table>
+    </section>
+  </main>
+</div>
+
+<!-- Modal editar item -->
+<div class="modal-overlay hidden" id="modal-editar">
+  <div class="modal-box" style="max-width:420px">
+    <button class="modal-fechar" onclick="fecharModal('modal-editar')">✕</button>
+    <h3 id="modal-editar-titulo">Editar</h3>
+    <div id="modal-editar-corpo" class="modal-editar-corpo"></div>
+  </div>
+</div>
+
+<div class="toast-container" id="toasts"></div>
+<script src="/js/app.js"></script>
+<script>
+let cardapioAdmin = null;
+
+async function init() {
+  const s = await carregarSessao();
+  if (!s || s.perfil !== 'funcionario' || (!s.roles.includes('cardapio') && !s.roles.includes('admin'))) {
+    window.location.href = '/painel/pedidos'; return;
+  }
+  document.getElementById('link-pedidos').style.display = '';
+  if (s.roles.includes('admin')) {
+    document.getElementById('link-clientes').style.display = '';
+    document.getElementById('link-funcionarios').style.display = '';
+  }
+  await carregarCardapioAdmin();
+}
+
+async function carregarCardapioAdmin() {
+  const res = await fetch('/api/cardapio/admin');
+  cardapioAdmin = await res.json();
+  renderizarTudo();
+}
+
+function renderizarTudo() {
+  renderizarTamanhos();
+  renderizarSabores();
+  renderizarBordas();
+  renderizarBebidas();
+}
+
+/* Tamanhos */
+function renderizarTamanhos() {
+  document.getElementById('tabela-tamanhos').innerHTML = `
+    <thead><tr><th>Tamanho</th><th>Max Sabores</th><th>Preço</th><th>Disponível</th><th></th></tr></thead>
+    <tbody>${cardapioAdmin.tamanhos.map(t => `<tr>
+      <td><strong>${t.nome.toUpperCase()}</strong></td>
+      <td>${t.max_sabores}</td>
+      <td>${formatarMoeda(t.preco)}</td>
+      <td><span class="badge ${t.disponivel ? 'badge-entregue' : 'badge-cancelado'}">${t.disponivel ? 'Sim' : 'Não'}</span></td>
+      <td><button class="btn btn-outline btn-sm" onclick='editarTamanho(${JSON.stringify(t)})'>Editar</button></td>
+    </tr>`).join('')}</tbody>`;
+}
+
+function editarTamanho(t) {
+  document.getElementById('modal-editar-titulo').textContent = `Tamanho: ${t.nome.toUpperCase()}`;
+  document.getElementById('modal-editar-corpo').innerHTML = `
+    <div class="form-group"><label>Preço</label>
+      <input class="form-control" type="number" step="0.01" id="ed-preco" value="${t.preco}"></div>
+    <div class="form-group"><label>Disponível</label>
+      <select class="form-control" id="ed-disp">
+        <option value="1" ${t.disponivel?'selected':''}>Sim</option>
+        <option value="0" ${!t.disponivel?'selected':''}>Não</option>
+      </select></div>
+    <button class="btn btn-amarelo btn-block" onclick="salvarTamanho(${t.id})">SALVAR</button>`;
+  document.getElementById('modal-editar').classList.remove('hidden');
+}
+
+async function salvarTamanho(id) {
+  const preco = document.getElementById('ed-preco').value;
+  const disponivel = document.getElementById('ed-disp').value === '1';
+  const res = await fetch(`/api/cardapio/tamanho/${id}`, {
+    method: 'PUT', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ preco, disponivel }),
+  });
+  if (res.ok) { toast('Tamanho atualizado!','sucesso'); fecharModal('modal-editar'); await carregarCardapioAdmin(); }
+  else toast('Erro ao salvar.','erro');
+}
+
+/* Sabores */
+function renderizarSabores() {
+  document.getElementById('tabela-sabores').innerHTML = `
+    <thead><tr><th>Nome</th><th>Categoria</th><th>Disponível</th><th></th></tr></thead>
+    <tbody>${cardapioAdmin.sabores.map(s => `<tr>
+      <td><strong>${s.nome}</strong></td>
+      <td>${s.categoria}</td>
+      <td><span class="badge ${s.disponivel ? 'badge-entregue' : 'badge-cancelado'}">${s.disponivel ? 'Sim' : 'Não'}</span></td>
+      <td><button class="btn btn-outline btn-sm" onclick='editarSabor(${JSON.stringify(s)})'>Editar</button></td>
+    </tr>`).join('')}</tbody>`;
+}
+
+function abrirModalSabor(s = null) {
+  document.getElementById('modal-editar-titulo').textContent = s ? 'Editar Sabor' : 'Novo Sabor';
+  document.getElementById('modal-editar-corpo').innerHTML = `
+    <div class="form-group"><label>Nome</label>
+      <input class="form-control" id="ed-nome" value="${s?.nome || ''}"></div>
+    <div class="form-group"><label>Categoria</label>
+      <select class="form-control" id="ed-cat">
+        <option value="salgado" ${s?.categoria==='salgado'?'selected':''}>Salgado</option>
+        <option value="doce" ${s?.categoria==='doce'?'selected':''}>Doce</option>
+      </select></div>
+    <div class="form-group"><label>Descrição dos ingredientes</label>
+      <textarea class="form-control" id="ed-descricao" rows="3" placeholder="Ex: Molho de tomate, muçarela, calabresa...">${s?.descricao || ''}</textarea></div>
+    ${s ? `<div class="form-group"><label>Disponível</label>
+      <select class="form-control" id="ed-disp">
+        <option value="1" ${s.disponivel?'selected':''}>Sim</option>
+        <option value="0" ${!s.disponivel?'selected':''}>Não</option>
+      </select></div>` : ''}
+    <button class="btn btn-amarelo btn-block" onclick="salvarSabor(${s?.id || null})">SALVAR</button>`;
+  document.getElementById('modal-editar').classList.remove('hidden');
+}
+
+function editarSabor(s) { abrirModalSabor(s); }
+
+async function salvarSabor(id) {
+  const nome      = document.getElementById('ed-nome').value.trim();
+  const categoria = document.getElementById('ed-cat').value;
+  const descricao = document.getElementById('ed-descricao').value.trim();
+  const dispEl    = document.getElementById('ed-disp');
+  const disponivel = dispEl ? dispEl.value === '1' : true;
+
+  const url    = id ? `/api/cardapio/sabor/${id}` : '/api/cardapio/sabor';
+  const method = id ? 'PUT' : 'POST';
+  const res = await fetch(url, {
+    method, headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ nome, categoria, descricao, disponivel }),
+  });
+  if (res.ok) { toast('Sabor salvo!','sucesso'); fecharModal('modal-editar'); await carregarCardapioAdmin(); }
+  else toast('Erro ao salvar.','erro');
+}
+
+/* Bordas */
+function renderizarBordas() {
+  document.getElementById('tabela-bordas').innerHTML = `
+    <thead><tr><th>Nome</th><th>Preço</th><th>Disponível</th><th></th></tr></thead>
+    <tbody>${cardapioAdmin.bordas.map(b => `<tr>
+      <td><strong>${b.nome}</strong></td>
+      <td>${formatarMoeda(b.preco)}</td>
+      <td><span class="badge ${b.disponivel ? 'badge-entregue' : 'badge-cancelado'}">${b.disponivel ? 'Sim' : 'Não'}</span></td>
+      <td><button class="btn btn-outline btn-sm" onclick='editarBorda(${JSON.stringify(b)})'>Editar</button></td>
+    </tr>`).join('')}</tbody>`;
+}
+
+function editarBorda(b) {
+  document.getElementById('modal-editar-titulo').textContent = `Borda: ${b.nome}`;
+  document.getElementById('modal-editar-corpo').innerHTML = `
+    <div class="form-group"><label>Nome</label>
+      <input class="form-control" id="ed-nome" value="${b.nome}"></div>
+    <div class="form-group"><label>Preço</label>
+      <input class="form-control" type="number" step="0.01" id="ed-preco" value="${b.preco}"></div>
+    <div class="form-group"><label>Disponível</label>
+      <select class="form-control" id="ed-disp">
+        <option value="1" ${b.disponivel?'selected':''}>Sim</option>
+        <option value="0" ${!b.disponivel?'selected':''}>Não</option>
+      </select></div>
+    <button class="btn btn-amarelo btn-block" onclick="salvarBorda(${b.id})">SALVAR</button>`;
+  document.getElementById('modal-editar').classList.remove('hidden');
+}
+
+async function salvarBorda(id) {
+  const nome = document.getElementById('ed-nome').value;
+  const preco = document.getElementById('ed-preco').value;
+  const disponivel = document.getElementById('ed-disp').value === '1';
+  const res = await fetch(`/api/cardapio/borda/${id}`, {
+    method: 'PUT', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ nome, preco, disponivel }),
+  });
+  if (res.ok) { toast('Borda atualizada!','sucesso'); fecharModal('modal-editar'); await carregarCardapioAdmin(); }
+  else toast('Erro ao salvar.','erro');
+}
+
+/* Bebidas */
+function renderizarBebidas() {
+  document.getElementById('tabela-bebidas').innerHTML = `
+    <thead><tr><th>Tipo</th><th>Sabor</th><th>Volume</th><th>Preço</th><th>Disponível</th><th></th></tr></thead>
+    <tbody>${cardapioAdmin.bebidas.map(b => `<tr>
+      <td>${b.tipo}</td>
+      <td>${b.sabor}</td>
+      <td>${b.volume_ml}ml</td>
+      <td>${formatarMoeda(b.preco)}</td>
+      <td><span class="badge ${b.disponivel ? 'badge-entregue' : 'badge-cancelado'}">${b.disponivel ? 'Sim' : 'Não'}</span></td>
+      <td class="td-acoes">
+        <button class="btn btn-outline btn-sm" onclick='editarBebida(${JSON.stringify(b)})'>Editar Preço</button>
+        <button class="btn btn-outline btn-sm" onclick="toggleBebida(${b.disponivel_id},${!b.disponivel})">
+          ${b.disponivel ? 'Desativar' : 'Ativar'}
+        </button>
+      </td>
+    </tr>`).join('')}</tbody>`;
+}
+
+function editarBebida(b) {
+  document.getElementById('modal-editar-titulo').textContent = `Bebida: ${b.sabor} ${b.volume_ml}ml`;
+  document.getElementById('modal-editar-corpo').innerHTML = `
+    <div class="form-group"><label>Preço</label>
+      <input class="form-control" type="number" step="0.01" id="ed-preco" value="${b.preco}"></div>
+    <button class="btn btn-amarelo btn-block" onclick="salvarBebidaPreco(${b.volume_id})">SALVAR</button>`;
+  document.getElementById('modal-editar').classList.remove('hidden');
+}
+
+async function salvarBebidaPreco(volumeId) {
+  const preco = document.getElementById('ed-preco').value;
+  const res = await fetch(`/api/cardapio/bebida-volume/${volumeId}/preco`, {
+    method: 'PUT', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ preco }),
+  });
+  if (res.ok) { toast('Preço atualizado!','sucesso'); fecharModal('modal-editar'); await carregarCardapioAdmin(); }
+  else toast('Erro ao salvar.','erro');
+}
+
+async function toggleBebida(id, novoDisp) {
+  const res = await fetch(`/api/cardapio/bebida/${id}/disponivel`, {
+    method: 'PUT', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ disponivel: novoDisp }),
+  });
+  if (res.ok) { toast('Bebida atualizada!','sucesso'); await carregarCardapioAdmin(); }
+  else toast('Erro.','erro');
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pizza Planet — Meu Perfil</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<header>
+  <div class="header-container painel-header">
+    <div class="logo-painel hover-effect">
+      <a href="/home"><img src="/img/Logo/Logo Branca.png" alt="Logo Pizza Planet"></a>
+    </div>
+    <nav>
+      <ul>
+        <li id="nav-voltar" class="hover-effect"><a href="#" id="link-voltar">← Voltar</a></li>
+        <li id="nav-logout" class="borda-branca hover-effect">
+          <a href="#" onclick="fazerLogout();return false" id="nav-nome">Sair</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<div class="perfil-wrapper">
+  <h2 class="titulo-secao perfil-titulo">Meu Perfil</h2>
+
+  <!-- Dados pessoais -->
+  <div class="perfil-card">
+    <h3>Dados Pessoais</h3>
+
+    <div class="form-group">
+      <label>Nome completo</label>
+      <input class="form-control input-desabilitado" id="p-nome" type="text" disabled>
+    </div>
+    <div class="form-group">
+      <label>CPF</label>
+      <input class="form-control input-desabilitado" id="p-cpf" type="text" disabled>
+    </div>
+    <div class="form-group">
+      <label>Login</label>
+      <input class="form-control input-desabilitado" id="p-login" type="text" disabled>
+    </div>
+    <div class="form-group">
+      <label>E-mail</label>
+      <input class="form-control" id="p-email" type="email">
+    </div>
+    <div class="form-group">
+      <label>Telefone</label>
+      <input class="form-control" id="p-telefone" type="tel" placeholder="(00) 90000-0000">
+    </div>
+    <button onclick="salvarDados()" class="btn-salvar-perfil">
+      SALVAR ALTERAÇÕES
+    </button>
+  </div>
+
+  <!-- Alterar senha -->
+  <div class="perfil-card">
+    <h3>Alterar Senha</h3>
+
+    <div class="form-group">
+      <label>Senha atual</label>
+      <input class="form-control" id="s-atual" type="password" placeholder="••••••••">
+    </div>
+    <div class="form-group">
+      <label>Nova senha</label>
+      <input class="form-control" id="s-nova" type="password" placeholder="Mínimo 6 caracteres">
+    </div>
+    <div class="form-group">
+      <label>Confirmar nova senha</label>
+      <input class="form-control" id="s-confirma" type="password" placeholder="Repita a nova senha">
+    </div>
+    <p id="senha-erro" class="senha-erro"></p>
+    <button onclick="alterarSenha()" class="btn-alterar-senha">
+      ALTERAR SENHA
+    </button>
+  </div>
+</div>
+
+<div class="toast-container" id="toasts"></div>
+<script src="/js/app.js"></script>
+<script>
+async function init() {
+  const s = await carregarSessao();
+  if (!s) { window.location.href = '/home'; return; }
+
+  // Definir link de voltar conforme perfil
+  const linkVoltar = document.getElementById('link-voltar');
+  if (s.perfil === 'funcionario') linkVoltar.href = '/painel/pedidos';
+  else if (s.perfil === 'entregador') linkVoltar.href = '/painel/entregas';
+  else linkVoltar.href = '/home';
+
+  carregarDados();
+}
+
+async function carregarDados() {
+  const res = await fetch('/api/auth/perfil');
+  if (!res.ok) return;
+  const p = await res.json();
+  document.getElementById('p-nome').value     = p.nome || '';
+  document.getElementById('p-cpf').value      = p.cpf || '';
+  document.getElementById('p-login').value    = p.login || '';
+  document.getElementById('p-email').value    = p.email || '';
+  document.getElementById('p-telefone').value = p.telefone || '';
+}
+
+async function salvarDados() {
+  const body = {
+    email:    document.getElementById('p-email').value.trim(),
+    telefone: document.getElementById('p-telefone').value.trim(),
+  };
+  const res = await fetch('/api/auth/perfil', {
+    method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body),
+  });
+  if (res.ok) toast('Dados atualizados!', 'sucesso');
+  else toast('Erro ao salvar.', 'erro');
+}
+
+async function alterarSenha() {
+  const senhaAtual  = document.getElementById('s-atual').value;
+  const novaSenha   = document.getElementById('s-nova').value;
+  const confirma    = document.getElementById('s-confirma').value;
+  const erroEl      = document.getElementById('senha-erro');
+  erroEl.style.display = 'none';
+
+  if (!senhaAtual || !novaSenha || !confirma) {
+    erroEl.textContent = 'Preencha todos os campos.';
+    erroEl.style.display = 'block'; return;
+  }
+  if (novaSenha !== confirma) {
+    erroEl.textContent = 'As senhas não coincidem.';
+    erroEl.style.display = 'block'; return;
+  }
+  if (novaSenha.length < 6) {
+    erroEl.textContent = 'A nova senha deve ter no mínimo 6 caracteres.';
+    erroEl.style.display = 'block'; return;
+  }
+
+  const res = await fetch('/api/auth/senha', {
+    method: 'PUT', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ senhaAtual, novaSenha }),
+  });
+  const json = await res.json();
+  if (!res.ok) {
+    erroEl.textContent = json.erro || 'Erro ao alterar senha.';
+    erroEl.style.display = 'block'; return;
+  }
+  toast('Senha alterada com sucesso!', 'sucesso');
+  document.getElementById('s-atual').value    = '';
+  document.getElementById('s-nova').value     = '';
+  document.getElementById('s-confirma').value = '';
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

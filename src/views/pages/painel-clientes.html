@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pizza Planet — Clientes</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<header>
+  <div class="header-container painel-header">
+    <div class="logo-painel hover-effect">
+      <a href="/home"><img src="/img/Logo/Logo Branca.png" alt="Logo Pizza Planet"></a>
+    </div>
+    <nav>
+      <ul>
+        <li class="hover-effect"><a href="/meu-perfil" class="nav-perfil-link">Meu Perfil</a></li>
+        <li id="nav-logout">
+          <a href="#" class="btn-nav-borda" onclick="fazerLogout();return false" id="nav-nome">Sair</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<div class="painel-layout">
+  <aside class="painel-sidebar">
+    <div class="sidebar-titulo">Painel</div>
+    <a class="sidebar-link" href="/painel/pedidos" id="link-pedidos">
+      <img class="sidebar-icone" src="/img/Icones/pedidos.png" alt=""> Pedidos
+    </a>
+    <a class="sidebar-link" href="/painel/cardapio" id="link-cardapio" style="display:none">
+      <img class="sidebar-icone" src="/img/Icones/cardapio.png" alt=""> Cardápio
+    </a>
+    <a class="sidebar-link ativo" href="/painel/clientes">
+      <img class="sidebar-icone" src="/img/Icones/clientes.png" alt=""> Clientes
+    </a>
+    <a class="sidebar-link" href="/painel/funcionarios" id="link-funcionarios" style="display:none">
+      <img class="sidebar-icone" src="/img/Icones/funcionarios.png" alt=""> Funcionários
+    </a>
+  </aside>
+
+  <main class="painel-conteudo">
+    <h2 class="titulo-secao" style="margin-bottom:1.5rem">Clientes</h2>
+    <div id="tabela-clientes"><p class="pedidos-vazio">Carregando...</p></div>
+  </main>
+</div>
+
+<div class="modal-overlay hidden" id="modal-cliente">
+  <div class="modal-box">
+    <button class="modal-fechar" onclick="fecharModal('modal-cliente')">✕</button>
+    <h3 id="modal-cli-titulo">Cliente</h3>
+    <div id="modal-cli-corpo" class="cliente-modal-corpo"></div>
+  </div>
+</div>
+
+<div class="toast-container" id="toasts"></div>
+<script src="/js/app.js"></script>
+<script>
+async function init() {
+  const s = await carregarSessao();
+  if (!s || s.perfil !== 'funcionario' || !s.roles.includes('admin')) {
+    window.location.href = '/painel/pedidos'; return;
+  }
+  document.getElementById('link-pedidos').style.display = '';
+  if (s.roles.includes('cardapio') || s.roles.includes('admin'))
+    document.getElementById('link-cardapio').style.display = '';
+  document.getElementById('link-funcionarios').style.display = '';
+  carregarClientes();
+}
+
+async function carregarClientes() {
+  const res = await fetch('/api/clientes');
+  const lista = await res.json();
+  document.getElementById('tabela-clientes').innerHTML = `
+    <table class="tabela">
+      <thead><tr><th>Nome</th><th>E-mail</th><th>Telefone</th><th>Ativo</th><th></th></tr></thead>
+      <tbody>${lista.map(c => `<tr>
+        <td><strong>${c.nome}</strong></td>
+        <td>${c.email}</td>
+        <td>${c.telefone || '—'}</td>
+        <td><span class="badge ${c.ativo ? 'badge-entregue' : 'badge-cancelado'}">${c.ativo ? 'Ativo' : 'Inativo'}</span></td>
+        <td><button class="btn btn-outline btn-sm" onclick="verCliente(${c.cliente_id})">Ver</button></td>
+      </tr>`).join('')}</tbody>
+    </table>`;
+}
+
+async function verCliente(clienteId) {
+  const res = await fetch(`/api/clientes/${clienteId}`);
+  const c = await res.json();
+  document.getElementById('modal-cli-titulo').textContent = c.nome;
+  let html = `<p>E-mail: ${c.email}</p><p>Tel: ${c.telefone || '—'}</p>
+    <hr class="cliente-modal-hr">
+    <h4 class="cliente-modal-titulo-secao">Endereços</h4>`;
+  if (c.enderecos?.length)
+    c.enderecos.forEach(e => {
+      html += `<p class="cliente-modal-item">${e.logradouro}, ${e.numero} — ${e.bairro}, ${e.cidade}${e.principal ? ' ⭐' : ''}</p>`;
+    });
+  else html += '<p class="cliente-modal-vazio">Sem endereços.</p>';
+
+  html += `<hr class="cliente-modal-hr"><h4 class="cliente-modal-titulo-secao">Formas de Pagamento</h4>`;
+  if (c.pagamentos?.length)
+    c.pagamentos.forEach(p => {
+      html += `<p class="cliente-modal-item">${p.tipo}${p.bandeira ? ` · ${p.bandeira} ****${p.ultimos_digitos}` : ''}${p.principal ? ' ⭐' : ''}</p>`;
+    });
+  else html += '<p class="cliente-modal-vazio">Sem formas de pagamento.</p>';
+
+  html += `<hr class="cliente-modal-hr">
+    <button class="btn btn-outline btn-sm" onclick="toggleAtivo(${c.pessoa_id},${c.ativo},${clienteId})">
+      ${c.ativo ? 'Desativar conta' : 'Ativar conta'}
+    </button>`;
+  document.getElementById('modal-cli-corpo').innerHTML = html;
+  document.getElementById('modal-cliente').classList.remove('hidden');
+}
+
+async function toggleAtivo(pessoaId, ativoAtual, clienteId) {
+  const res = await fetch(`/api/clientes/${clienteId}`, {
+    method: 'PUT', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ ativo: !ativoAtual }),
+  });
+  if (res.ok) { toast('Conta atualizada!','sucesso'); fecharModal('modal-cliente'); carregarClientes(); }
+  else toast('Erro.','erro');
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

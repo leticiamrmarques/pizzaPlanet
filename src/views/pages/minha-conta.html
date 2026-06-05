@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pizza Planet — Minha Conta</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<header>
+  <div class="header-container">
+    <div class="logo hover-effect">
+      <a href="/home"><img src="/img/Logo/Logo Branca.png" alt="Logo Pizza Planet"></a>
+    </div>
+    <nav>
+      <ul>
+        <li class="hover-effect"><a href="/cardapio">Cardápio</a></li>
+        <li id="nav-logout" class="borda-branca hover-effect">
+          <a href="#" onclick="fazerLogout();return false" id="nav-nome">Sair</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<div class="conta-wrapper">
+
+  <!-- Abas -->
+  <div class="conta-abas">
+    <button class="filtro-btn ativo" onclick="mostrarAba('dados')">👤 Meus Dados</button>
+    <button class="filtro-btn" onclick="mostrarAba('enderecos')">📍 Endereços</button>
+    <button class="filtro-btn" onclick="mostrarAba('pedidos')">📋 Meus Pedidos</button>
+  </div>
+
+  <!-- Meus Dados -->
+  <div id="aba-dados" class="aba-dados-container">
+    <div class="aba-dados-card">
+      <h2 class="titulo-secao aba-dados-titulo">Meus Dados</h2>
+      <div class="form-group">
+        <label>CPF</label>
+        <input class="form-control input-desabilitado" id="d-cpf" type="text" disabled>
+      </div>
+      <div class="form-group">
+        <label>Nome completo</label>
+        <input class="form-control" id="d-nome" type="text">
+      </div>
+      <div class="form-group">
+        <label>E-mail</label>
+        <input class="form-control" id="d-email" type="email">
+      </div>
+      <div class="form-group">
+        <label>Telefone</label>
+        <input class="form-control" id="d-telefone" type="tel" placeholder="(00) 90000-0000">
+      </div>
+      <button class="btn-amarelo btn-salvar-conta" onclick="salvarDados()">SALVAR ALTERAÇÕES</button>
+      <hr class="conta-hr">
+      <button class="btn-excluir-conta" onclick="confirmarExclusao()">
+        🗑️ Excluir minha conta
+      </button>
+    </div>
+  </div>
+
+  <!-- Endereços -->
+  <div id="aba-enderecos" style="display:none">
+    <div class="enderecos-header">
+      <h2 class="titulo-secao">Meus Endereços</h2>
+      <button class="btn-novo-endereco" onclick="abrirModalEndereco()">+ Novo Endereço</button>
+    </div>
+    <div id="lista-enderecos"><p class="pedidos-vazio">Carregando...</p></div>
+  </div>
+
+  <!-- Pedidos -->
+  <div id="aba-pedidos" style="display:none">
+    <h2 class="titulo-secao" style="margin-bottom:1.5rem">Meus Pedidos</h2>
+    <div id="lista-pedidos-conta"><p class="pedidos-vazio">Carregando...</p></div>
+  </div>
+
+</div>
+
+<!-- Modal endereço -->
+<div class="modal-overlay hidden" id="modal-endereco">
+  <div class="modal-box">
+    <button class="modal-fechar" onclick="fecharModal('modal-endereco')">✕</button>
+    <h3 id="modal-end-titulo">Novo Endereço</h3>
+    <div id="modal-end-corpo" class="modal-editar-corpo"></div>
+  </div>
+</div>
+
+<!-- Modal detalhe pedido -->
+<div class="modal-overlay hidden" id="modal-pedido">
+  <div class="modal-box" style="max-width:580px">
+    <button class="modal-fechar" onclick="fecharModal('modal-pedido')">✕</button>
+    <h3>Detalhes do Pedido</h3>
+    <div id="modal-pedido-corpo" class="modal-editar-corpo"></div>
+  </div>
+</div>
+
+<!-- Modal confirmação exclusão -->
+<div class="modal-overlay hidden" id="modal-excluir">
+  <div class="modal-box" style="max-width:420px;text-align:center">
+    <h3 class="modal-excluir-titulo">Excluir conta</h3>
+    <p class="modal-excluir-texto">Tem certeza que deseja excluir sua conta? Esta ação não pode ser desfeita.</p>
+    <div class="modal-excluir-acoes">
+      <button class="btn-cancelar-exclusao" onclick="fecharModal('modal-excluir')">Cancelar</button>
+      <button class="btn-confirmar-exclusao" onclick="excluirConta()">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toasts"></div>
+<script src="/js/app.js"></script>
+<script>
+let sessao = null;
+
+async function init() {
+  sessao = await carregarSessao();
+  if (!sessao || sessao.perfil !== 'cliente') {
+    window.location.href = '/home'; return;
+  }
+  const aba = new URLSearchParams(window.location.search).get('aba') || 'dados';
+  mostrarAba(aba);
+  if (aba === 'dados') carregarDados();
+}
+
+function mostrarAba(aba) {
+  ['dados','enderecos','pedidos'].forEach(a => {
+    document.getElementById('aba-' + a).style.display = a === aba ? (a === 'dados' ? 'flex' : '') : 'none';
+  });
+  document.querySelectorAll('.filtro-btn').forEach((b, i) => {
+    b.classList.toggle('ativo', ['dados','enderecos','pedidos'][i] === aba);
+  });
+  if (aba === 'enderecos') carregarEnderecos();
+  if (aba === 'pedidos') carregarPedidos();
+}
+
+/* ── Dados ── */
+async function carregarDados() {
+  const res = await fetch(`/api/clientes/${sessao.clienteId}`);
+  const c = await res.json();
+  document.getElementById('d-cpf').value      = c.cpf || '';
+  document.getElementById('d-nome').value     = c.nome || '';
+  document.getElementById('d-email').value    = c.email || '';
+  document.getElementById('d-telefone').value = c.telefone || '';
+}
+
+async function salvarDados() {
+  const body = {
+    nome:     document.getElementById('d-nome').value.trim(),
+    email:    document.getElementById('d-email').value.trim(),
+    telefone: document.getElementById('d-telefone').value.trim(),
+    ativo:    true,
+  };
+  const res = await fetch(`/api/clientes/${sessao.clienteId}`, {
+    method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body),
+  });
+  if (res.ok) toast('Dados atualizados!', 'sucesso');
+  else toast('Erro ao salvar.', 'erro');
+}
+
+function confirmarExclusao() {
+  document.getElementById('modal-excluir').classList.remove('hidden');
+}
+
+async function excluirConta() {
+  const res = await fetch(`/api/clientes/${sessao.clienteId}`, {
+    method: 'PUT', headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ nome: sessao.nome, email: '', telefone: '', ativo: false }),
+  });
+  if (res.ok) {
+    await fetch('/api/auth/logout', { method: 'POST' });
+    window.location.href = '/home';
+  } else toast('Erro ao excluir conta.', 'erro');
+}
+
+/* ── Endereços ── */
+async function carregarEnderecos() {
+  const res = await fetch(`/api/clientes/${sessao.clienteId}/enderecos`);
+  const lista = await res.json();
+  const div = document.getElementById('lista-enderecos');
+
+  if (!lista.length) {
+    div.innerHTML = `<div class="enderecos-vazio">
+      <p>Você ainda não tem endereços cadastrados.</p>
+      <button onclick="abrirModalEndereco()">+ Adicionar Endereço</button>
+    </div>`;
+    return;
+  }
+
+  div.innerHTML = lista.map(e => `
+    <div class="endereco-card">
+      <div class="endereco-info">
+        <strong>${e.logradouro}, ${e.numero}${e.complemento ? ' — ' + e.complemento : ''}</strong>
+        ${e.principal ? ' <span class="badge-principal">Principal</span>' : ''}
+        <p>${e.bairro}, ${e.cidade} — ${e.estado} · CEP ${e.cep}</p>
+        ${e.ponto_referencia ? `<p class="referencia">📌 ${e.ponto_referencia}</p>` : ''}
+      </div>
+      <div class="endereco-acoes">
+        <button class="btn btn-outline btn-sm" onclick="editarEndereco(${e.id})">Editar</button>
+        <button class="btn-excluir-end btn-sm" onclick="excluirEndereco(${e.id})">Excluir</button>
+      </div>
+    </div>`).join('');
+}
+
+function abrirModalEndereco(endId = null) {
+  document.getElementById('modal-end-titulo').textContent = endId ? 'Editar Endereço' : 'Novo Endereço';
+  document.getElementById('modal-end-corpo').innerHTML = `
+    <div class="form-row">
+      <div class="form-group"><label>CEP *</label>
+        <input class="form-control" id="e-cep" placeholder="00000-000" onblur="buscarCep(this.value)"></div>
+      <div class="form-group"><label>Número *</label>
+        <input class="form-control" id="e-numero"></div>
+    </div>
+    <div class="form-group"><label>Logradouro *</label>
+      <input class="form-control" id="e-logradouro"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Bairro *</label>
+        <input class="form-control" id="e-bairro"></div>
+      <div class="form-group"><label>Complemento</label>
+        <input class="form-control" id="e-complemento"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Cidade *</label>
+        <input class="form-control" id="e-cidade"></div>
+      <div class="form-group"><label>Estado *</label>
+        <input class="form-control" id="e-estado" maxlength="2" placeholder="DF"></div>
+    </div>
+    <div class="form-group"><label>Ponto de referência</label>
+      <input class="form-control" id="e-referencia" placeholder="Ex: Próximo ao mercado"></div>
+    <div class="form-group checkbox-principal">
+      <input type="checkbox" id="e-principal">
+      <label for="e-principal">Definir como endereço principal</label>
+    </div>
+    <button class="btn-salvar-endereco" onclick="salvarEndereco(${endId})">SALVAR</button>`;
+  document.getElementById('modal-endereco').classList.remove('hidden');
+}
+
+async function buscarCep(cep) {
+  const c = cep.replace(/\D/g,'');
+  if (c.length !== 8) return;
+
+  // CEPs de Brasília/DF: 70000-000 a 73699-999 e 73700-000 a 73699-999
+  const num = parseInt(c);
+  const ehDF = (num >= 70000000 && num <= 73699999) || (num >= 73700000 && num <= 73699999);
+  if (!ehDF) {
+    toast('Não realizamos entregas nessa região. Aceitamos apenas endereços do Distrito Federal.', 'erro');
+    document.getElementById('e-cep').value = '';
+    return;
+  }
+
+  try {
+    const res = await fetch(`https://viacep.com.br/ws/${c}/json/`);
+    const d = await res.json();
+    if (d.erro) { toast('CEP não encontrado.', 'erro'); return; }
+    document.getElementById('e-logradouro').value = d.logradouro || '';
+    document.getElementById('e-bairro').value     = d.bairro || '';
+    document.getElementById('e-cidade').value     = d.localidade || '';
+    document.getElementById('e-estado').value     = d.uf || '';
+  } catch { toast('Erro ao buscar CEP.', 'erro'); }
+}
+
+async function editarEndereco(endId) {
+  const res = await fetch(`/api/clientes/${sessao.clienteId}/enderecos`);
+  const lista = await res.json();
+  const e = lista.find(x => x.id === endId);
+  if (!e) return;
+  abrirModalEndereco(endId);
+  setTimeout(() => {
+    document.getElementById('e-cep').value         = e.cep || '';
+    document.getElementById('e-numero').value      = e.numero || '';
+    document.getElementById('e-logradouro').value  = e.logradouro || '';
+    document.getElementById('e-bairro').value      = e.bairro || '';
+    document.getElementById('e-complemento').value = e.complemento || '';
+    document.getElementById('e-cidade').value      = e.cidade || '';
+    document.getElementById('e-estado').value      = e.estado || '';
+    document.getElementById('e-referencia').value  = e.ponto_referencia || '';
+    document.getElementById('e-principal').checked = !!e.principal;
+  }, 50);
+}
+
+async function excluirEndereco(endId) {
+  if (!confirm('Deseja excluir este endereço?')) return;
+  const res = await fetch(`/api/clientes/${sessao.clienteId}/enderecos/${endId}`, {
+    method: 'DELETE',
+  });
+  if (res.ok) { toast('Endereço excluído!', 'sucesso'); carregarEnderecos(); }
+  else toast('Erro ao excluir endereço.', 'erro');
+}
+
+async function salvarEndereco(endId) {
+  const body = {
+    cep:              document.getElementById('e-cep').value.trim(),
+    numero:           document.getElementById('e-numero').value.trim(),
+    logradouro:       document.getElementById('e-logradouro').value.trim(),
+    bairro:           document.getElementById('e-bairro').value.trim(),
+    complemento:      document.getElementById('e-complemento').value.trim(),
+    cidade:           document.getElementById('e-cidade').value.trim(),
+    estado:           document.getElementById('e-estado').value.trim(),
+    ponto_referencia: document.getElementById('e-referencia').value.trim(),
+    principal:        document.getElementById('e-principal').checked,
+  };
+
+  if (!body.cep || !body.logradouro || !body.numero || !body.bairro || !body.cidade || !body.estado) {
+    toast('Preencha todos os campos obrigatórios.', 'erro'); return;
+  }
+
+  const url    = endId ? `/api/clientes/${sessao.clienteId}/enderecos/${endId}` : `/api/clientes/${sessao.clienteId}/enderecos`;
+  const method = endId ? 'PUT' : 'POST';
+
+  const res = await fetch(url, {
+    method, headers: {'Content-Type':'application/json'}, body: JSON.stringify(body),
+  });
+
+  if (res.ok) {
+    toast('Endereço salvo!', 'sucesso');
+    fecharModal('modal-endereco');
+    carregarEnderecos();
+  } else toast('Erro ao salvar endereço.', 'erro');
+}
+
+/* ── Pedidos ── */
+async function carregarPedidos() {
+  const res = await fetch('/api/pedidos');
+  const pedidos = await res.json();
+  const div = document.getElementById('lista-pedidos-conta');
+
+  if (!pedidos.length) {
+    div.innerHTML = '<p class="pedidos-vazio">Você ainda não fez nenhum pedido.</p>'; return;
+  }
+
+  div.innerHTML = `
+    <table class="tabela">
+      <thead><tr><th>#</th><th>Data</th><th>Total</th><th>Status</th><th>Pagamento</th><th></th></tr></thead>
+      <tbody>${pedidos.map(p => `<tr>
+        <td><strong>#${p.id}</strong></td>
+        <td>${formatarData(p.criado_em)}</td>
+        <td>${formatarMoeda(p.valor_total)}</td>
+        <td>${badgeStatus(p.status_atual)}</td>
+        <td><span class="badge ${p.status_pagamento==='pago'?'badge-pago':'badge-pendente'}">${p.status_pagamento}</span></td>
+        <td><button class="btn btn-outline btn-sm" onclick="verPedido(${p.id})">Ver</button></td>
+      </tr>`).join('')}</tbody>
+    </table>`;
+}
+
+async function verPedido(id) {
+  const res = await fetch(`/api/pedidos/${id}`);
+  const p = await res.json();
+  let html = `<p><strong>Pedido #${p.id}</strong> · ${formatarData(p.criado_em)}</p>
+    <p class="pedido-ver-header">${p.logradouro}, ${p.numero} — ${p.bairro}, ${p.cidade}</p>
+    <hr class="pedido-ver-hr"><h4 class="pedido-ver-historico-titulo">Itens</h4>`;
+  p.pizzas?.forEach(pi => {
+    html += `<p class="pedido-ver-item">🍕 ${pi.sabores.join(' + ')} — ${pi.tamanho_nome}${pi.borda_nome ? ` · Borda ${pi.borda_nome}` : ''} · Qtd ${pi.quantidade} · <strong>${formatarMoeda((Number(pi.valor_unitario)+Number(pi.valor_borda||0))*pi.quantidade)}</strong></p>`;
+  });
+  p.bebidas?.forEach(b => {
+    html += `<p class="pedido-ver-item">🥤 ${b.sabor} ${b.volume_ml}ml · Qtd ${b.quantidade} · <strong>${formatarMoeda(b.valor_unitario*b.quantidade)}</strong></p>`;
+  });
+  html += `<div class="pedido-totais">
+    <div class="pedido-total-linha"><span>Subtotal</span><span>${formatarMoeda(p.valor_itens)}</span></div>
+    <div class="pedido-total-frete"><span>Frete</span><span>${formatarMoeda(p.valor_frete)}</span></div>
+    <div class="pedido-total-final"><span>Total</span><span>${formatarMoeda(p.valor_total)}</span></div>
+  </div>
+    <hr class="pedido-ver-hr"><h4 class="pedido-ver-historico-titulo">Histórico</h4>`;
+  p.historico?.forEach(h => {
+    html += `<p class="historico-linha">${formatarData(h.alterado_em)} — ${badgeStatus(h.status)}`;
+    if (h.status === 'cancelado' && h.observacao) {
+      html += `<br><span class="pedido-ver-cancelado-motivo">📋 Motivo: ${h.observacao}</span>`;
+    }
+    html += `</p>`;
+  });
+  document.getElementById('modal-pedido-corpo').innerHTML = html;
+  document.getElementById('modal-pedido').classList.remove('hidden');
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

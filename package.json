@@ -1,0 +1,18 @@
+{
+  "name": "pizzaria_leticiamarques",
+  "version": "1.0.0",
+  "description": "Sistema de pedidos de pizzaria - Node.js + MySQL",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js"
+  },
+  "keywords": [],
+  "author": "Letícia Marques",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "mysql2": "^3.22.4"
+  }
+}

@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pizza Planet — Cardápio</title>
+  <meta name="description" content="Confira nosso cardápio completo de pizzas salgadas, doces e bebidas">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<header>
+  <div class="header-container">
+    <div class="logo hover-effect">
+      <a href="/home">
+        <img src="/img/Logo/Logo Branca.png" alt="Logo Pizza Planet">
+      </a>
+    </div>
+    <nav>
+      <ul>
+        <li class="hover-effect"><a href="/cardapio">CARDÁPIO</a></li>
+        <li class="hover-effect"><a href="/home#promocoes">PROMOÇÕES</a></li>
+        <li class="hover-effect"><a href="/home#avaliacoes">AVALIAÇÕES</a></li>
+        <li class="borda-branca hover-effect">
+          <a href="https://wa.me/5561999601108" target="_blank">RESERVAS</a>
+        </li>
+        <li id="nav-painel" class="borda-branca hover-effect" style="display:none">
+          <a href="/painel/pedidos">PAINEL</a>
+        </li>
+        <li id="nav-entregas" class="borda-branca hover-effect" style="display:none">
+          <a href="/painel/entregas">ENTREGAS</a>
+        </li>
+        <li id="nav-minha-conta" class="borda-branca hover-effect" style="display:none">
+          <a href="/minha-conta">MINHA CONTA</a>
+        </li>
+        <li id="nav-logout" class="hover-effect" style="display:none">
+          <a href="#" id="nav-nome" onclick="fazerLogout();return false">SAIR</a>
+        </li>
+        <li id="nav-login" class="borda-amarela hover-effect">
+          <a href="#" onclick="mostrarLogin();return false">ENTRAR</a>
+        </li>
+        <li class="borda-amarela hover-effect">
+          <a href="#" onclick="abrirCarrinho();return false">FAÇA SEU PEDIDO</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<section id="cardapio-banner">
+  <h1>CARDÁPIO</h1>
+  <h4>GUIA DE TAMANHOS</h4>
+  <div class="card-tamanhos card-tamanhos-personalisados" id="guia-tamanhos"></div>
+</section>
+
+<main>
+  <section id="pizzas-salgadas">
+    <div class="titulo-tamanhos">
+      <h1>PIZZAS SALGADAS</h1>
+      <div class="card-tamanhos" id="tamanhos-salgadas"></div>
+    </div>
+    <div id="slide-salgadas">
+      <div class="btn-setas">
+        <button class="setaEsquerda hover-effect-card" id="setaEsquerda-salgadas" aria-label="Pizzas salgadas anteriores">
+          <img src="/img/Icones/Seta Esquerda.png" alt="">
+        </button>
+        <button class="setaDireita hover-effect-card" id="setaDireita-salgadas" aria-label="Próximas pizzas salgadas">
+          <img src="/img/Icones/Seta Direita.png" alt="">
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section id="pizzas-doces">
+    <div class="titulo-tamanhos">
+      <h1>PIZZAS DOCES</h1>
+      <div class="card-tamanhos" id="tamanhos-doces"></div>
+    </div>
+    <div id="slide-doces">
+      <div class="btn-setas">
+        <button class="setaEsquerda hover-effect-card" id="setaEsquerda-doces" aria-label="Pizzas doces anteriores">
+          <img src="/img/Icones/Seta Esquerda.png" alt="">
+        </button>
+        <button class="setaDireita hover-effect-card" id="setaDireita-doces" aria-label="Próximas pizzas doces">
+          <img src="/img/Icones/Seta Direita.png" alt="">
+        </button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<section id="bebidas">
+  <div class="titulo-tamanhos">
+    <h1>BEBIDAS</h1>
+  </div>
+  <div id="bebidas-container">
+    <div id="sucos">
+      <h6>SUCO NATURAL</h6>
+      <div class="card-tamanhos" id="tamanhos-sucos"></div>
+      <div class="sabores-bebidas">
+        <div class="sabores-bebidas-container">
+          <img src="/img/Bebidas/suco-copo.png" alt="Copo de suco natural">
+          <div class="sabores-sucos-refri">
+            <h3>SABORES</h3>
+            <div class="nomes-sucos-refri" id="sabores-sucos"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="refris">
+      <h6>REFRIGERANTE</h6>
+      <div class="card-tamanhos" id="tamanhos-refris"></div>
+      <div class="sabores-bebidas">
+        <div class="sabores-bebidas-container">
+          <img id="coca" src="/img/Bebidas/coca.png" alt="Garrafa de Coca-Cola">
+          <div class="sabores-sucos-refri">
+            <h3>SABORES</h3>
+            <div class="nomes-sucos-refri" id="sabores-refris"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="rodape-container">
+    <div class="logo">
+      <a href="/home">
+        <img src="/img/Logo/Logo Branca.png" alt="Logo Pizza Planet">
+      </a>
+    </div>
+    <div class="contato-redes">
+      <a href="https://wa.me/5561999601108" target="_blank" class="hover-effect centralizar">
+        <img src="/img/Icones/Telefone.png" alt="Ícone telefone">
+        (61) 99999-9999
+      </a>
+      <div class="centralizar">
+        <a href="https://www.facebook.com/?locale=pt_BR" target="_blank" class="hover-effect">
+          <img src="/img/Icones/Facebook.png" alt="Facebook">
+        </a>
+        <a href="https://www.instagram.com/" target="_blank" class="hover-effect">
+          <img src="/img/Icones/Instagram.png" alt="Instagram">
+        </a>
+        <a href="https://www.tripadvisor.com.br/" target="_blank" class="hover-effect">
+          <img src="/img/Icones/Trip Advisor.png" alt="TripAdvisor">
+        </a>
+      </div>
+    </div>
+    <div class="btn-rodape">
+      <ul>
+        <li class="borda-branca hover-effect">
+          <a href="https://wa.me/5561999601108" target="_blank">RESERVAS</a>
+        </li>
+        <li class="borda-amarela hover-effect">
+          <a href="#" onclick="abrirCarrinho();return false">FAÇA SEU PEDIDO</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="rodape-copyright">
+    <span>Todos os direitos reservados. Pizza Planet — 2026</span>
+  </div>
+</footer>
+
+<!-- MODAL LOGIN -->
+<div class="modal-overlay hidden" id="modal-login">
+  <div class="modal-box" style="max-width:380px">
+    <button class="modal-fechar" onclick="fecharModal('modal-login')">✕</button>
+    <h3>Entrar</h3>
+    <div class="form-group">
+      <label>Login ou E-mail</label>
+      <input class="form-control" id="login-input" type="text" placeholder="seu.login ou email@exemplo.com">
+    </div>
+    <div class="form-group">
+      <label>Senha</label>
+      <input class="form-control" id="login-senha" type="password" placeholder="••••••••">
+    </div>
+    <p id="login-erro" class="login-erro"></p>
+    <button class="btn-amarelo" onclick="submitLogin()">ENTRAR</button>
+    <p class="modal-cadastro-link">
+      Não tem conta? <a href="/cadastro">Cadastre-se</a>
+    </p>
+  </div>
+</div>
+
+<!-- OVERLAY CARRINHO -->
+<div id="overlay-carrinho" class="hidden" aria-hidden="true" role="dialog" aria-modal="true">
+  <div class="carrinho-container" role="document" tabindex="0">
+    <button class="fechar-overlay" aria-label="Fechar carrinho" onclick="fecharCarrinho()">×</button>
+    <h2>Faça seu pedido</h2>
+    <form id="form-carrinho">
+      <div class="etapa linha-dupla">
+        <div class="col-esquerda">
+          <h3>Escolha o tamanho da pizza</h3>
+          <select id="tamanho-pizza" name="tamanho">
+            <option value="" disabled selected>Selecione o tamanho</option>
+          </select>
+        </div>
+        <div class="col-direita">
+          <h3>Quantidade</h3>
+          <select id="quantidade-pizza" name="quantidade">
+            <option value="1" selected>1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+          </select>
+        </div>
+      </div>
+      <div class="etapa">
+        <h3>Escolha os sabores (máximo <span id="max-sabores">0</span>)</h3>
+        <div id="sabores-container" class="sabores-container"></div>
+      </div>
+      <div class="etapa">
+        <h3>Escolha a borda</h3>
+        <select id="borda-pizza" name="borda">
+          <option value="" selected>Sem borda</option>
+        </select>
+      </div>
+      <div class="etapa">
+        <button type="button" id="btn-adicionar-pizza" class="btn-adicionar">
+          + Adicionar pizza(s) ao carrinho
+        </button>
+      </div>
+      <div class="etapa">
+        <h3>Escolha a bebida (opcional)</h3>
+        <select id="tipo-bebida" name="tipo-bebida">
+          <option value="" selected>Sem bebida</option>
+        </select>
+      </div>
+      <div class="etapa etapa-bebida-oculta" id="container-tamanho-bebida">
+        <h3>Escolha o volume da bebida</h3>
+        <select id="volume-bebida" name="volume-bebida" disabled></select>
+      </div>
+      <div class="etapa etapa-bebida-oculta" id="container-sabor-bebida">
+        <h3>Escolha o sabor da bebida</h3>
+        <select id="sabor-bebida" name="sabor-bebida" disabled></select>
+      </div>
+      <div class="etapa etapa-bebida-oculta" id="btn-bebida-wrap">
+        <button type="button" id="btn-adicionar-bebida" class="btn-adicionar">
+          + Adicionar bebida ao carrinho
+        </button>
+      </div>
+      <div id="resumo-carrinho" class="resumo-oculto">
+        <h3>Resumo do pedido</h3>
+        <div id="itens-resumo"></div>
+        <div class="preco-total"></div>
+      </div>
+      <div id="area-entrega" class="area-entrega">
+        <div class="etapa">
+          <h3>Endereço de entrega</h3>
+          <select id="select-endereco"></select>
+          <div id="area-novo-endereco" class="area-novo-endereco">
+            <p>Você não tem endereços cadastrados.</p>
+          </div>
+          <a href="/minha-conta?aba=enderecos" class="link-gerenciar-enderecos">
+            + Gerenciar endereços
+          </a>
+        </div>
+        <div class="etapa">
+          <h3>Forma de pagamento</h3>
+          <select id="select-pagamento" onchange="atualizarCampoPagamento()">
+            <option value="pix">Pix</option>
+            <option value="cartao_credito">Cartão de Crédito</option>
+            <option value="cartao_debito">Cartão de Débito</option>
+            <option value="dinheiro">Dinheiro</option>
+          </select>
+          <div id="area-troco" class="area-troco">
+            <h3>Troco</h3>
+            <label class="label-troco">
+              <input type="radio" name="troco" value="trocado" checked onchange="atualizarTroco()"> Tenho o dinheiro trocado
+            </label>
+            <label class="label-troco-ultimo">
+              <input type="radio" name="troco" value="valor" onchange="atualizarTroco()"> Preciso de troco para:
+            </label>
+            <div id="area-valor-troco" class="area-valor-troco">
+              <input type="number" id="valor-troco" class="form-control input-troco" placeholder="Ex: 100" min="0" step="0.01">
+            </div>
+          </div>
+        </div>
+        <button type="submit">Finalizar Compra</button>
+      </div>
+      <div id="area-login-carrinho" class="area-login-carrinho">
+        <p>Para finalizar, faça login ou crie uma conta.</p>
+        <button type="button" class="btn-amarelo" onclick="fecharCarrinho();mostrarLogin()">ENTRAR</button>
+        <p class="cadastro-link">
+          Não tem conta? <a href="/cadastro">Cadastre-se</a>
+        </p>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="toast-container" id="toasts"></div>
+<script src="/js/app.js"></script>
+<script src="/js/cardapio.js"></script>
+<script>
+async function carregarPaginaCardapio() {
+  await carregarCardapio();
+  renderizarGuiaTamanhos();
+  renderizarPizzasPorCategoria('salgado', 'slide-salgadas', 'pizzas-salgadas', 'salgadas-ativo');
+  renderizarPizzasPorCategoria('doce', 'slide-doces', 'pizzas-doces', 'doces-ativo');
+  renderizarTamanhosMiniatura('tamanhos-salgadas');
+  renderizarTamanhosMiniatura('tamanhos-doces');
+  renderizarBebidasCardapio();
+}
+
+function renderizarGuiaTamanhos() {
+  const infos = [
+    { nome: 'BROTO', fatias: '4 fatias', cm: '25 cm' },
+    { nome: 'MÉDIA', fatias: '6 fatias', cm: '30 cm' },
+    { nome: 'GRANDE', fatias: '8 fatias', cm: '35 cm' },
+    { nome: 'GIGANTE', fatias: '12 fatias', cm: '40 cm' },
+  ];
+  const div = document.getElementById('guia-tamanhos');
+  if (!div) return;
+  div.innerHTML = cardapio.tamanhos.map((t, i) => `
+    <a class="hover-effect fazer-pedido" href="#" onclick="abrirCarrinho();return false">
+      <div class="tamanhos tamanhos-cardapio">
+        <h5>${t.nome.toUpperCase()}</h5>
+        <h4>R$ ${Number(t.preco).toFixed(2).replace('.', ',')}</h4>
+        <h4>${infos[i]?.fatias || ''}</h4>
+        <h4>${infos[i]?.cm || ''}</h4>
+      </div>
+    </a>`).join('');
+}
+
+function renderizarTamanhosMiniatura(containerId) {
+  const div = document.getElementById(containerId);
+  if (!div) return;
+  div.innerHTML = cardapio.tamanhos.map(t => `
+    <a class="hover-effect-card" href="#" onclick="abrirCarrinho();return false">
+      <div class="tamanhos">
+        <h5>${t.nome.toUpperCase()}</h5>
+        <h4>R$ ${Number(t.preco).toFixed(2).replace('.', ',')}</h4>
+      </div>
+    </a>`).join('');
+}
+
+function renderizarPizzasPorCategoria(categoria, slideId, classeSlide, classeAtivo) {
+  const container = document.getElementById(slideId);
+  if (!container) return;
+
+  container.querySelectorAll('.' + classeSlide).forEach(el => el.remove());
+
+  const sabores = cardapio.sabores.filter(s => s.categoria === categoria);
+  const POR_SLIDE = 4;
+  const btnSetas = container.querySelector('.btn-setas');
+
+  for (let i = 0; i < sabores.length; i += POR_SLIDE) {
+    const grupo = sabores.slice(i, i + POR_SLIDE);
+    const slide = document.createElement('div');
+    slide.className = classeSlide + (i === 0 ? ' ' + classeAtivo : '');
+
+    grupo.forEach(s => {
+      const a = document.createElement('a');
+      a.className = 'hover-effect-card fazer-pedido';
+      a.href = '#';
+      a.onclick = () => { selecionarSaborEAbrirCarrinho(s.id, s.nome); return false; };
+      a.innerHTML = `
+        <div class="card-${categoria === 'salgado' ? 'salgadas' : 'doces'}">
+          <img src="${imgSabor(s.nome)}" alt="Pizza ${s.nome}">
+          <div class="espaco">
+            <h3>${s.nome.toUpperCase()}</h3>
+            <p>${s.descricao || ''}</p>
+          </div>
+        </div>`;
+      slide.appendChild(a);
+    });
+
+    container.insertBefore(slide, btnSetas);
+  }
+
+  const idEsq = 'setaEsquerda-' + (categoria === 'salgado' ? 'salgadas' : 'doces');
+  const idDir = 'setaDireita-' + (categoria === 'salgado' ? 'salgadas' : 'doces');
+  configurarSetas(idEsq, idDir, '.' + classeSlide, classeAtivo);
+}
+
+function renderizarBebidasCardapio() {
+  const sucoVolumes = [...new Map(
+    cardapio.bebidas.filter(b => b.tipo === 'suco natural').map(b => [b.volume_id, b])
+  ).values()];
+
+  document.getElementById('tamanhos-sucos').innerHTML = sucoVolumes.map(b => `
+    <a class="hover-effect-card" href="#" onclick="abrirCarrinho();return false">
+      <div class="tamanhos">
+        <h5>${b.volume_ml >= 1000 ? (b.volume_ml / 1000) + 'L' : b.volume_ml + 'ml'}</h5>
+        <h4>R$ ${Number(b.preco).toFixed(2).replace('.', ',')}</h4>
+      </div>
+    </a>`).join('');
+
+  const sucoSabores = [...new Map(
+    cardapio.bebidas.filter(b => b.tipo === 'suco natural').map(b => [b.sabor_id, b.sabor])
+  ).values()];
+  const metade = Math.ceil(sucoSabores.length / 2);
+  document.getElementById('sabores-sucos').innerHTML =
+    `<ul>${sucoSabores.slice(0, metade).map(s => `<li>${s}</li>`).join('')}</ul>` +
+    `<ul>${sucoSabores.slice(metade).map(s => `<li>${s}</li>`).join('')}</ul>`;
+
+  const refriVolumes = [...new Map(
+    cardapio.bebidas.filter(b => b.tipo === 'refrigerante').map(b => [b.volume_id, b])
+  ).values()];
+
+  document.getElementById('tamanhos-refris').innerHTML = refriVolumes.map(b => `
+    <a class="hover-effect-card" href="#" onclick="abrirCarrinho();return false">
+      <div class="tamanhos">
+        <h5>${b.volume_ml >= 1000 ? (b.volume_ml / 1000) + 'L' : b.volume_ml + 'ml'}</h5>
+        <h4>R$ ${Number(b.preco).toFixed(2).replace('.', ',')}</h4>
+      </div>
+    </a>`).join('');
+
+  const refriSabores = [...new Map(
+    cardapio.bebidas.filter(b => b.tipo === 'refrigerante').map(b => [b.sabor_id, b.sabor])
+  ).values()];
+  const metadeR = Math.ceil(refriSabores.length / 2);
+  document.getElementById('sabores-refris').innerHTML =
+    `<ul>${refriSabores.slice(0, metadeR).map(s => `<li>${s}</li>`).join('')}</ul>` +
+    `<ul>${refriSabores.slice(metadeR).map(s => `<li>${s}</li>`).join('')}</ul>`;
+}
+
+document.addEventListener('DOMContentLoaded', carregarPaginaCardapio);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pizza Planet — Cadastro</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<header>
+  <div class="header-container painel-header">
+    <div class="logo-painel hover-effect">
+      <a href="/home">
+        <img src="/img/Logo/Logo Branca.png" alt="Logo Pizza Planet">
+      </a>
+    </div>
+    <nav>
+      <ul>
+        <li class="hover-effect">
+          <a href="/cardapio">← Voltar ao Cardápio</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<div class="cadastro-wrapper">
+  <div class="cadastro-card">
+
+    <h2 class="titulo-secao cadastro-titulo">Criar Conta</h2>
+
+    <form id="form-cadastro" onsubmit="submitCadastro(event)">
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nome completo *</label>
+          <input class="form-control" type="text" name="nome" required placeholder="Seu nome">
+        </div>
+        <div class="form-group">
+          <label>CPF *</label>
+          <input class="form-control" type="text" name="cpf" required placeholder="000.000.000-00" maxlength="14">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>E-mail *</label>
+          <input class="form-control" type="email" name="email" required placeholder="email@exemplo.com">
+        </div>
+        <div class="form-group">
+          <label>Telefone</label>
+          <input class="form-control" type="tel" name="telefone" placeholder="(00) 90000-0000">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Login *</label>
+          <input class="form-control" type="text" name="login" required placeholder="seu.login">
+        </div>
+        <div class="form-group">
+          <label>Senha *</label>
+          <input class="form-control" type="password" name="senha" required placeholder="••••••••" minlength="6">
+        </div>
+      </div>
+
+      <p id="cadastro-erro" class="erro-form"></p>
+
+      <button type="submit" class="btn btn-amarelo btn-block cadastro-btn">
+        CRIAR CONTA
+      </button>
+
+      <p class="cadastro-login-link">
+        Já tem conta?
+        <a href="#" onclick="window.history.back(); return false">Entrar</a>
+      </p>
+
+    </form>
+  </div>
+</div>
+
+<div class="toast-container" id="toasts"></div>
+<script src="/js/app.js"></script>
+<script>
+async function submitCadastro(e) {
+  e.preventDefault();
+  const form = e.target;
+  const data = Object.fromEntries(new FormData(form).entries());
+  const erro = document.getElementById('cadastro-erro');
+  erro.style.display = 'none';
+
+  const res = await fetch('/api/auth/cadastro', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+
+  const json = await res.json();
+
+  if (!res.ok) {
+    erro.textContent = json.erro;
+    erro.style.display = 'block';
+    return;
+  }
+
+  toast('Conta criada com sucesso!', 'sucesso');
+  setTimeout(() => window.location.href = json.destino || '/cardapio', 800);
+}
+</script>
+
+</body>
+</html>

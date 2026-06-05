@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pizza Planet — Funcionários</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<header>
+  <div class="header-container painel-header">
+    <div class="logo-painel hover-effect">
+      <a href="/home"><img src="/img/Logo/Logo Branca.png" alt="Logo Pizza Planet"></a>
+    </div>
+    <nav>
+      <ul>
+        <li class="hover-effect"><a href="/meu-perfil" class="nav-perfil-link">Meu Perfil</a></li>
+        <li id="nav-logout">
+          <a href="#" class="btn-nav-borda" onclick="fazerLogout();return false" id="nav-nome">Sair</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<div class="painel-layout">
+  <aside class="painel-sidebar">
+    <div class="sidebar-titulo">Painel</div>
+    <a class="sidebar-link" href="/painel/pedidos" id="link-pedidos">
+      <img class="sidebar-icone" src="/img/Icones/pedidos.png" alt=""> Pedidos
+    </a>
+    <a class="sidebar-link" href="/painel/cardapio" id="link-cardapio" style="display:none">
+      <img class="sidebar-icone" src="/img/Icones/cardapio.png" alt=""> Cardápio
+    </a>
+    <a class="sidebar-link" href="/painel/clientes" id="link-clientes" style="display:none">
+      <img class="sidebar-icone" src="/img/Icones/clientes.png" alt=""> Clientes
+    </a>
+    <a class="sidebar-link ativo" href="/painel/funcionarios">
+      <img class="sidebar-icone" src="/img/Icones/funcionarios.png" alt=""> Funcionários
+    </a>
+  </aside>
+
+  <main class="painel-conteudo">
+    <!-- Abas -->
+    <div class="conta-abas">
+      <button class="filtro-btn ativo" id="aba-funcionarios" onclick="mostrarAba('funcionarios')">👤 Funcionários</button>
+      <button class="filtro-btn" id="aba-entregadores" onclick="mostrarAba('entregadores')">🛵 Entregadores</button>
+    </div>
+
+    <!-- Funcionários -->
+    <div id="secao-funcionarios">
+      <div class="painel-func-header">
+        <h2 class="titulo-secao">Funcionários</h2>
+        <button class="btn btn-sm btn-novo-func" onclick="abrirCadastroFuncionario()">+ Novo Funcionário</button>
+      </div>
+      <div id="tabela-funcionarios"><p class="pedidos-vazio">Carregando...</p></div>
+    </div>
+
+    <!-- Entregadores -->
+    <div id="secao-entregadores" style="display:none">
+      <div class="painel-func-header">
+        <h2 class="titulo-secao">Entregadores</h2>
+        <button class="btn btn-sm btn-novo-func" onclick="abrirCadastroEntregador()">+ Novo Entregador</button>
+      </div>
+      <div id="tabela-entregadores"><p class="pedidos-vazio">Carregando...</p></div>
+    </div>
+  </main>
+</div>
+
+<div class="modal-overlay hidden" id="modal-func">
+  <div class="modal-box">
+    <button class="modal-fechar" onclick="fecharModal('modal-func')">✕</button>
+    <h3 id="modal-func-titulo">Funcionário</h3>
+    <div id="modal-func-corpo" class="modal-editar-corpo"></div>
+  </div>
+</div>
+
+<div class="toast-container" id="toasts"></div>
+<script src="/js/app.js"></script>
+<script>
+const ROLES_LABELS = { cardapio: 'Cardápio', pedidos: 'Pedidos', admin: 'Admin' };
+let abaAtual = 'funcionarios';
+
+async function init() {
+  const s = await carregarSessao();
+  if (!s || s.perfil !== 'funcionario' || !s.roles.includes('admin')) {
+    window.location.href = '/painel/pedidos'; return;
+  }
+  document.getElementById('link-pedidos').style.display = '';
+  if (s.roles.includes('cardapio') || s.roles.includes('admin'))
+    document.getElementById('link-cardapio').style.display = '';
+  document.getElementById('link-clientes').style.display = '';
+  carregarFuncionarios();
+}
+
+function mostrarAba(aba) {
+  abaAtual = aba;
+  document.getElementById('secao-funcionarios').style.display = aba === 'funcionarios' ? '' : 'none';
+  document.getElementById('secao-entregadores').style.display = aba === 'entregadores' ? '' : 'none';
+  document.getElementById('aba-funcionarios').classList.toggle('ativo', aba === 'funcionarios');
+  document.getElementById('aba-entregadores').classList.toggle('ativo', aba === 'entregadores');
+  if (aba === 'funcionarios') carregarFuncionarios();
+  else carregarEntregadores();
+}
+
+/* ── Funcionários ── */
+async function carregarFuncionarios() {
+  const res = await fetch('/api/funcionarios');
+  const lista = await res.json();
+  document.getElementById('tabela-funcionarios').innerHTML = `
+    <table class="tabela">
+      <thead><tr><th>Nome</th><th>E-mail</th><th>Cargo</th><th>Roles</th><th>Ativo</th><th></th></tr></thead>
+      <tbody>${lista.map(f => `<tr>
+        <td><strong>${f.nome}</strong></td>
+        <td>${f.email}</td>
+        <td>${f.cargo || '—'}</td>
+        <td>${(f.roles||[]).map(r => `<span class="badge badge-producao" style="margin-right:3px">${ROLES_LABELS[r]||r}</span>`).join('')}</td>
+        <td><span class="badge ${f.funcionario_ativo ? 'badge-entregue' : 'badge-cancelado'}">${f.funcionario_ativo ? 'Ativo' : 'Inativo'}</span></td>
+        <td><button class="btn btn-outline btn-sm" onclick="editarFuncionario(${f.funcionario_id})">Editar</button></td>
+      </tr>`).join('')}</tbody>
+    </table>`;
+}
+
+function abrirCadastroFuncionario() {
+  document.getElementById('modal-func-titulo').textContent = 'Novo Funcionário';
+  document.getElementById('modal-func-corpo').innerHTML = `
+    <div class="form-row">
+      <div class="form-group"><label>Nome *</label><input class="form-control" id="f-nome"></div>
+      <div class="form-group"><label>E-mail *</label><input class="form-control" id="f-email" type="email"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>CPF *</label><input class="form-control" id="f-cpf" placeholder="000.000.000-00"></div>
+      <div class="form-group"><label>Telefone</label><input class="form-control" id="f-tel"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Login *</label><input class="form-control" id="f-login"></div>
+      <div class="form-group"><label>Senha *</label><input class="form-control" id="f-senha" type="password"></div>
+    </div>
+    <div class="form-group"><label>Cargo</label>
+      <select class="form-control" id="f-cargo">
+        <option>atendente</option><option>caixa</option><option>supervisor</option><option>gerente</option>
+      </select></div>
+    <div class="form-group"><label>Roles</label>
+      <div class="func-roles-lista">
+        <label><input type="checkbox" value="pedidos" name="role"> Pedidos</label>
+        <label><input type="checkbox" value="cardapio" name="role"> Cardápio</label>
+        <label><input type="checkbox" value="admin" name="role"> Admin</label>
+      </div></div>
+    <button class="btn btn-amarelo btn-block" onclick="salvarNovoFuncionario()">CADASTRAR</button>`;
+  document.getElementById('modal-func').classList.remove('hidden');
+}
+
+async function salvarNovoFuncionario() {
+  const roles = [...document.querySelectorAll('input[name="role"]:checked')].map(c => c.value);
+  const body = {
+    nome: document.getElementById('f-nome').value,
+    cpf:  document.getElementById('f-cpf').value,
+    email: document.getElementById('f-email').value,
+    telefone: document.getElementById('f-tel').value,
+    login: document.getElementById('f-login').value,
+    senha: document.getElementById('f-senha').value,
+    cargo: document.getElementById('f-cargo').value,
+    roles,
+  };
+  const res = await fetch('/api/funcionarios', {
+    method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body),
+  });
+  const json = await res.json();
+  if (!res.ok) { toast(json.erro || 'Erro.', 'erro'); return; }
+  toast('Funcionário cadastrado!', 'sucesso');
+  fecharModal('modal-func');
+  carregarFuncionarios();
+}
+
+async function editarFuncionario(id) {
+  const res = await fetch(`/api/funcionarios/${id}`);
+  const f = await res.json();
+  document.getElementById('modal-func-titulo').textContent = `Editar: ${f.nome}`;
+  document.getElementById('modal-func-corpo').innerHTML = `
+    <p class="func-email-info">${f.email}</p>
+    <div class="form-group"><label>Cargo</label>
+      <select class="form-control" id="fe-cargo">
+        <option ${f.cargo==='atendente'?'selected':''}>atendente</option>
+        <option ${f.cargo==='caixa'?'selected':''}>caixa</option>
+        <option ${f.cargo==='supervisor'?'selected':''}>supervisor</option>
+        <option ${f.cargo==='gerente'?'selected':''}>gerente</option>
+      </select></div>
+    <div class="form-group"><label>Ativo</label>
+      <select class="form-control" id="fe-ativo">
+        <option value="1" ${f.funcionario_ativo?'selected':''}>Sim</option>
+        <option value="0" ${!f.funcionario_ativo?'selected':''}>Não</option>
+      </select></div>
+    <div class="form-group"><label>Roles</label>
+      <div class="func-roles-lista">
+        ${['pedidos','cardapio','admin'].map(r => `
+          <label>
+            <input type="checkbox" value="${r}" name="role-edit" ${f.roles.includes(r)?'checked':''}> ${ROLES_LABELS[r]}
+          </label>`).join('')}
+      </div></div>
+    <button class="btn btn-amarelo btn-block" onclick="salvarEdicaoFuncionario(${id})">SALVAR</button>`;
+  document.getElementById('modal-func').classList.remove('hidden');
+}
+
+async function salvarEdicaoFuncionario(id) {
+  const roles = [...document.querySelectorAll('input[name="role-edit"]:checked')].map(c => c.value);
+  const body = {
+    cargo: document.getElementById('fe-cargo').value,
+    ativo: document.getElementById('fe-ativo').value === '1',
+    roles,
+  };
+  const res = await fetch(`/api/funcionarios/${id}`, {
+    method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body),
+  });
+  if (res.ok) { toast('Funcionário atualizado!','sucesso'); fecharModal('modal-func'); carregarFuncionarios(); }
+  else toast('Erro ao salvar.','erro');
+}
+
+/* ── Entregadores ── */
+async function carregarEntregadores() {
+  const res = await fetch('/api/entregadores');
+  const lista = await res.json();
+  document.getElementById('tabela-entregadores').innerHTML = `
+    <table class="tabela">
+      <thead><tr><th>Nome</th><th>E-mail</th><th>CNH</th><th>Placa</th><th>Ativo</th><th></th></tr></thead>
+      <tbody>${lista.map(e => `<tr>
+        <td><strong>${e.nome}</strong></td>
+        <td>${e.email}</td>
+        <td>${e.cnh}</td>
+        <td>${e.placa_veiculo}</td>
+        <td><span class="badge ${e.ativo ? 'badge-entregue' : 'badge-cancelado'}">${e.ativo ? 'Ativo' : 'Inativo'}</span></td>
+        <td><button class="btn btn-outline btn-sm" onclick="editarEntregador(${e.entregador_id})">Editar</button></td>
+      </tr>`).join('')}</tbody>
+    </table>`;
+}
+
+function abrirCadastroEntregador() {
+  document.getElementById('modal-func-titulo').textContent = 'Novo Entregador';
+  document.getElementById('modal-func-corpo').innerHTML = `
+    <div class="form-row">
+      <div class="form-group"><label>Nome *</label><input class="form-control" id="ne-nome"></div>
+      <div class="form-group"><label>E-mail *</label><input class="form-control" id="ne-email" type="email"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>CPF *</label><input class="form-control" id="ne-cpf" placeholder="000.000.000-00"></div>
+      <div class="form-group"><label>Telefone</label><input class="form-control" id="ne-tel"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Login *</label><input class="form-control" id="ne-login"></div>
+      <div class="form-group"><label>Senha *</label><input class="form-control" id="ne-senha" type="password"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>CNH *</label><input class="form-control" id="ne-cnh"></div>
+      <div class="form-group"><label>Placa *</label><input class="form-control" id="ne-placa"></div>
+    </div>
+    <button class="btn btn-amarelo btn-block" onclick="salvarEntregador()">CADASTRAR</button>`;
+  document.getElementById('modal-func').classList.remove('hidden');
+}
+
+async function salvarEntregador() {
+  const body = {
+    nome: document.getElementById('ne-nome').value,
+    cpf:  document.getElementById('ne-cpf').value,
+    email: document.getElementById('ne-email').value,
+    telefone: document.getElementById('ne-tel').value,
+    login: document.getElementById('ne-login').value,
+    senha: document.getElementById('ne-senha').value,
+    cnh:  document.getElementById('ne-cnh').value,
+    placa_veiculo: document.getElementById('ne-placa').value,
+  };
+  const res = await fetch('/api/entregadores', {
+    method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body),
+  });
+  const json = await res.json();
+  if (!res.ok) { toast(json.erro || 'Erro ao cadastrar.', 'erro'); return; }
+  toast('Entregador cadastrado!', 'sucesso');
+  fecharModal('modal-func');
+  carregarEntregadores();
+}
+
+async function editarEntregador(id) {
+  const res = await fetch('/api/entregadores');
+  const lista = await res.json();
+  const e = lista.find(x => x.entregador_id === id);
+  if (!e) return;
+  document.getElementById('modal-func-titulo').textContent = `Editar: ${e.nome}`;
+  document.getElementById('modal-func-corpo').innerHTML = `
+    <p class="func-email-info">${e.email}</p>
+    <div class="form-row">
+      <div class="form-group"><label>CNH</label><input class="form-control" id="ee-cnh" value="${e.cnh}"></div>
+      <div class="form-group"><label>Placa</label><input class="form-control" id="ee-placa" value="${e.placa_veiculo}"></div>
+    </div>
+    <div class="form-group"><label>Ativo</label>
+      <select class="form-control" id="ee-ativo">
+        <option value="1" ${e.ativo?'selected':''}>Sim</option>
+        <option value="0" ${!e.ativo?'selected':''}>Não</option>
+      </select></div>
+    <button class="btn btn-amarelo btn-block" onclick="salvarEdicaoEntregador(${id})">SALVAR</button>`;
+  document.getElementById('modal-func').classList.remove('hidden');
+}
+
+async function salvarEdicaoEntregador(id) {
+  const body = {
+    cnh: document.getElementById('ee-cnh').value,
+    placa_veiculo: document.getElementById('ee-placa').value,
+    ativo: document.getElementById('ee-ativo').value === '1',
+  };
+  const res = await fetch(`/api/entregadores/${id}`, {
+    method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(body),
+  });
+  if (res.ok) { toast('Entregador atualizado!','sucesso'); fecharModal('modal-func'); carregarEntregadores(); }
+  else toast('Erro ao salvar.','erro');
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
