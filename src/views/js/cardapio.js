@@ -444,7 +444,7 @@ async function carregarEnderecos(clienteId) {
     if (endBtnWrap) endBtnWrap.style.display = 'none';
   } else {
     sel.innerHTML = '<option value="">Nenhum endereço cadastrado</option>';
-    if (endBtnWrap) endBtnWrap.style.display = '';
+    if (endBtnWrap) endBtnWrap.style.display = 'block';
   }
 }
 
@@ -452,7 +452,7 @@ async function carregarEnderecos(clienteId) {
 function atualizarCampoPagamento() {
   const tipo = document.getElementById('select-pagamento')?.value;
   const areaTroco = document.getElementById('area-troco');
-  if (areaTroco) areaTroco.style.display = tipo === 'dinheiro' ? '' : 'none';
+  if (areaTroco) areaTroco.style.display = tipo === 'dinheiro' ? 'block' : 'none';
   if (tipo !== 'dinheiro') {
     const radios = document.querySelectorAll('input[name="troco"]');
     if (radios[0]) radios[0].checked = true;
@@ -464,7 +464,7 @@ function atualizarCampoPagamento() {
 function atualizarTroco() {
   const selecionado = document.querySelector('input[name="troco"]:checked')?.value;
   const areaValor = document.getElementById('area-valor-troco');
-  if (areaValor) areaValor.style.display = selecionado === 'valor' ? '' : 'none';
+  if (areaValor) areaValor.style.display = selecionado === 'valor' ? 'block' : 'none';
 }
 
 async function finalizarPedido(e) {
