@@ -41,7 +41,7 @@ const PAGE_ROUTES = {
   '/painel/clientes': 'painel-clientes.html',
   '/painel/funcionarios': 'painel-funcionarios.html',
   '/painel/entregas': 'painel-entregas.html',
-  '/meu-perfil': 'meu-perfil.html'
+  '/meu-perfil': 'meu-perfil.html',
   '/minha-conta':'minha-conta.html',
 };
 
