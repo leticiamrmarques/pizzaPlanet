@@ -45,7 +45,7 @@
     <h2 class="titulo-secao" style="margin-bottom:1.5rem">Pedidos</h2>
     <div class="filtros">
       <button class="filtro-btn ativo" onclick="filtrar(this,'')">Todos</button>
-      <button class="filtro-btn" onclick="filtrar(this,'aguardando_pagamento')">Aguardando</button>
+      <button class="filtro-btn" onclick="filtrar(this,'aguardando_aprovacao')">Aguardando</button>
       <button class="filtro-btn" onclick="filtrar(this,'em_producao')">Em Produção</button>
       <button class="filtro-btn" onclick="filtrar(this,'saiu_para_entrega')">Saiu p/ Entrega</button>
       <button class="filtro-btn" onclick="filtrar(this,'entregue')">Entregues</button>
@@ -126,7 +126,7 @@ function renderizarTabela(pedidos) {
 
 function botoesAcao(p) {
   const s = p.status_atual;
-  if (s === 'aguardando_pagamento')
+  if (s === 'aguardando_aprovacao')
     return `<button class="btn btn-sm btn-aceitar" onclick="atualizarStatus(${p.id},'em_producao')">✓ Aceitar</button>
             <button class="btn btn-sm btn-recusar" onclick="abrirCancelamento(${p.id})">✕ Recusar</button>`;
   if (s === 'em_producao')
