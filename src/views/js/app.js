@@ -23,28 +23,28 @@ function getSessao() { return _sessao; }
 function aplicarSessaoNoHeader() {
   const s = _sessao;
 
-  const navLogin    = document.getElementById('nav-login');
-  const navLogout   = document.getElementById('nav-logout');
-  const navNome     = document.getElementById('nav-nome');
-  const navPainel   = document.getElementById('nav-painel');
+  const navLogin = document.getElementById('nav-login');
+  const navLogout = document.getElementById('nav-logout');
+  const navNome = document.getElementById('nav-nome');
+  const navPainel = document.getElementById('nav-painel');
   const navEntregas = document.getElementById('nav-entregas');
   const navCarrinho = document.getElementById('nav-carrinho');
 
   if (!s) {
-    if (navLogin)    navLogin.style.display    = '';
-    if (navLogout)   navLogout.style.display   = 'none';
-    if (navPainel)   navPainel.style.display   = 'none';
+    if (navLogin) navLogin.style.display = '';
+    if (navLogout) navLogout.style.display = 'none';
+    if (navPainel) navPainel.style.display = 'none';
     if (navEntregas) navEntregas.style.display = 'none';
     if (navCarrinho) navCarrinho.style.display = '';
     return;
   }
 
-  if (navLogin)  navLogin.style.display  = 'none';
+  if (navLogin) navLogin.style.display = 'none';
   if (navLogout) navLogout.style.display = '';
-  if (navNome)   navNome.textContent     = `Olá, ${s.nome.split(' ')[0]} · Sair`;
+  if (navNome) navNome.textContent = `Olá, ${s.nome.split(' ')[0]} · Sair`;
 
   if (s.perfil === 'funcionario') {
-    if (navPainel)   navPainel.style.display   = '';
+    if (navPainel) navPainel.style.display = '';
     if (navCarrinho) navCarrinho.style.display = 'none';
   } else if (s.perfil === 'entregador') {
     if (navEntregas) navEntregas.style.display = '';
@@ -67,8 +67,8 @@ function fecharModal(id) {
 
 async function submitLogin() {
   const loginInput = document.getElementById('login-input').value.trim();
-  const senha      = document.getElementById('login-senha').value;
-  const erroEl     = document.getElementById('login-erro');
+  const senha = document.getElementById('login-senha').value;
+  const erroEl = document.getElementById('login-erro');
   erroEl.style.display = 'none';
 
   if (!loginInput || !senha) {
@@ -157,3 +157,36 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.key === 'Enter') submitLogin();
   });
 });
+
+// Alterar senha
+async function alterarSenha() {
+  const senhaAtual = document.getElementById('d-senha-atual').value;
+  const novaSenha = document.getElementById('d-nova-senha').value;
+  const confirmarSenha = document.getElementById('d-confirmar-senha').value;
+
+  if (!senhaAtual || !novaSenha || !confirmarSenha) {
+    toast('Preencha todos os campos de senha.', 'erro'); return;
+  }
+  if (novaSenha !== confirmarSenha) {
+    toast('A nova senha e a confirmação não coincidem.', 'erro'); return;
+  }
+  if (novaSenha.length < 6) {
+    toast('A nova senha deve ter no mínimo 6 caracteres.', 'erro'); return;
+  }
+
+  const res = await fetch('/api/auth/senha', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ senhaAtual, novaSenha }),
+  });
+
+  if (res.ok) {
+    toast('Senha alterada com sucesso!', 'sucesso');
+    document.getElementById('d-senha-atual').value = '';
+    document.getElementById('d-nova-senha').value = '';
+    document.getElementById('d-confirmar-senha').value = '';
+  } else {
+    const json = await res.json();
+    toast(json.erro || 'Erro ao alterar senha.', 'erro');
+  }
+}
